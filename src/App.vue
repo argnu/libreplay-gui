@@ -1,9 +1,6 @@
 <template>
-  <div id="app">
-    <h1>LibrePlay</h1>
-    <br><br>
-    <img src="./assets/logo.png">
-    <br><br>
+  <div id="app" class="ui container">
+    <br>
     <router-view></router-view>
   </div>
 </template>
@@ -15,6 +12,8 @@ export default {
 </script>
 
 <style>
+@import '../node_modules/semantic-ui-css/semantic.min.css';
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

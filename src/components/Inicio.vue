@@ -16,8 +16,9 @@
 
 <script>
 import { socket } from '../socket';
+import * as axios from 'axios';
 export default {
-  name: 'hello',
+  name: 'scan',
   props: ['socket'],
   data () {
     return {
@@ -27,14 +28,11 @@ export default {
   },
   methods: {
     scan: function(event) {
-      let xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {
-          }
-      };
-      xhttp.open("POST", "http://localhost:3000/rest/scan", true);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      xhttp.send(JSON.stringify({path:this.path}));
+      axios.post('http://localhost:3000/rest/scan', {path:this.path})
+        .then( response => {
+          console.log(response);
+        })
+        .catch( error => console.log(error) );
     }
   },
   created: function() {

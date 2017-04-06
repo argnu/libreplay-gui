@@ -7,6 +7,9 @@ import App from './App';
 import router from './router';
 import { MusicService } from './providers/music.service';
 
+import jQuery from 'jquery';
+import semantic from 'semantic-ui-css';
+
 
 Vue.config.productionTip = false;
 var MUSIC = new MusicService();

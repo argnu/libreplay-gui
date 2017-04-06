@@ -3,7 +3,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Inicio from '@/components/Inicio';
-import Artists from '@/components/Artists';
+import Container from '@/components/Container';
 
 Vue.use(Router);
 
@@ -15,9 +15,9 @@ export default new Router({
       component: Inicio
     },
     {
-      path: '/artists',
-      name: 'Artists',
-      component: Artists
+      path: '/player',
+      name: 'Container',
+      component: Container
     }
   ]
 });
