@@ -1,16 +1,10 @@
 <template>
   <div>
-    <div class="ui attached stackable menu">
+    <div class="ui stackable menu">
       <div class="ui container">
-        <a class="item">
-          <i class="music icon"></i>
-        </a>        
-        <a class="item">
-          LibrePlay
-        </a>
-        <a class="item">
-          <player :source="getSongUrl"></player>
-        </a>
+        <div class="item">
+          <player :source="getSongUrl" @next="nextSong" @previous="prevSong"></player>
+        </div>
         <div class="right item">
           <div class="ui input"><input placeholder="Search..." type="text"></div>
         </div>
@@ -30,7 +24,7 @@
         </div>
         <div class="row segment ui">
           <div class="column" style="max-height: 300px;overflow: auto">
-            <song-list :list="getSongs" @select="selectSong"></song-list>
+            <song-list :list="getSongs" @add="addSong" @play="addAndPlay"></song-list>
           </div>
         </div>
       </div>
@@ -52,7 +46,9 @@ export default {
     return {
       artist_selected: null,
       album_selected: null,
-      song_selected: null
+      song_selected: null,
+      i_song_selected: null,
+      playlist: []
     }
   },
 
@@ -98,6 +94,26 @@ export default {
     },
     selectSong: function(song) {
       this.song_selected = song;
+    },
+    nextSong: function() {
+      this.i_song_selected++;
+      if (this.i_song_selected == this.playlist.length) this.i_song_selected = 0;
+      this.song_selected = this.playlist[this.i_song_selected];
+    },
+    addSong: function(song) {
+      this.playlist.push(song);
+      if (this.playlist.length == 1) {
+        this.i_song_selected = 0;
+        this.song_selected = this.playlist[this.i_song_selected];
+      }
+    },
+    addAndPlay(song) {
+      this.i_song_selected = this.playlist.length;
+      this.playlist.push(song);
+      this.song_selected = song;
+    },
+    removeFromPlaylist: function(song) {
+      this.playlist = this.playlist.filter(s => s.id != song.id);
     }
   },
 

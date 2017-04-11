@@ -1,9 +1,11 @@
 <template>
   <div>
-    <audio ref="player" controls>
+    <a class="ui label" @click="previous"><i class="backward icon"></i></a>
+    <audio ref="player" controls @ended="next">
      <source :src="source" type="audio/mpeg">
       Your browser does not support the audio element.
    </audio>
+   <a class="ui label" @click="next"><i class="forward icon"></i></a>
   </div>
 </template>
 
@@ -15,10 +17,18 @@ export default {
     return {
     }
   },
-  methods: {},
+  methods: {
+    next: function() {
+      this.$emit('next');
+    },
+    previous: function() {
+      this.$emit('previous');
+    }
+  },
   mounted: function () {
       this.$watch('source', function() {
-          this.$refs.player.load()
+          this.$refs.player.load();
+          this.$refs.player.play();
       });
   }
 }

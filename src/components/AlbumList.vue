@@ -1,8 +1,14 @@
 <template>
   <div>
-    <div class="ui small images">
-      <a href="javascript:void(0)" @click="select(album)" v-for="album in list">
-        <img :src="picUrl">
+      <a href="javascript:void(0)" @click="select(album)" v-for="album in list" style="display:inline-block;padding:10px">
+        <div class="small image rounded">
+          <img :src="picUrl">
+        </div>
+        <div class="ui mini label">
+          {{ album.name }}
+          <br>
+          {{ album.artistName }}
+        </div>
       </a>
     </div>
   </div>
@@ -23,6 +29,7 @@ export default {
   },
   methods: {
     select: function(album) {
+      console.log(album);
       this.$emit('select', album);
     }
   }

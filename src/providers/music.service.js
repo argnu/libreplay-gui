@@ -13,10 +13,23 @@ export class MusicService {
     this.artists = [];
   }
 
+  prepareData(data) {
+
+  }
+
   init() {
     return axios.get('http://localhost:3000/rest/artists',{responseType: 'json'})
       .then( response => {
         this.artists = response.data;
+        this.artists.forEach(a => {
+          a.albums.forEach(alb => {
+            alb.artistName = a.name;
+            alb.songs.forEach(s => {
+              s.artistName = a.name;
+              s.albumName = alb.name;
+            });
+          });
+        });
       })
       .catch( error => handleError(error) );
   }
