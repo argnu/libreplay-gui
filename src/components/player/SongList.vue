@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <table class="ui very basic table selectable" style="cursor:pointer">
+  <div style="width:100%">
+    <table class="table is-striped">
       <thead>
         <tr>
-          <th>Play</th>
-          <th>Add</th>
+          <th></th>
+          <th></th>
           <th>Track</th>
           <th>Name</th>
           <th>Artist</th>
@@ -14,8 +14,8 @@
       </thead>
       <tbody>
         <tr @click="select(song)" type="button" v-for="song in list">
-          <td><a class="ui label" @click="addAndPlay(song)"><i class="play icon"></i></a></td>
-          <td><a class="ui label" @click="add(song)"><i class="plus icon"></i></a></td>
+          <td><i @click="addAndPlay(song)" class="fa fa-play"></i></td>
+          <td><i @click="add(song)" class="fa fa-plus"></i></td>
           <td>{{ song.track }}</td>
           <td>{{ song.name }}</td>
           <td>{{ song.artistName}}</td>
@@ -50,4 +50,7 @@ export default {
 </script>
 
 <style>
+i {
+  cursor: pointer;
+}
 </style>

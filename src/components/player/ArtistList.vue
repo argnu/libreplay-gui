@@ -1,11 +1,16 @@
 <template>
-  <div id="artist-list">
-    <div class="ui link list relaxed divided ">
-      <a :class="{ active: todos_active }" class="item" @click="select('all')">Todos los artistas</a>
-      <a :class="{ active: artist.is_active }" class="item" @click="select(artist)" v-for="artist in list">
-        {{ artist.name  }}
-      </a>
-    </div>
+  <div>
+    <aside class="menu">
+      <p class="menu-label">
+        Artistas
+      </p>
+      <ul class="menu-list">
+        <li><a :class="{ 'is-active': todos_active }" @click="select('all')">Todos los artistas</a></li>
+        <a :class="{ 'is-active': artist.is_active }" @click="select(artist)" v-for="artist in list">
+          {{ artist.name  }}
+        </a>
+      </ul>
+    </aside>
   </div>
 </template>
 
@@ -35,7 +40,6 @@ export default {
     }
   },
   created: function() {
-    this.todos_active = true;
     this.setActiveFalse();
   }
 }
