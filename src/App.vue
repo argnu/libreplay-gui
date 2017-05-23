@@ -18,6 +18,8 @@
 
     <router-view></router-view>
 
+    <br>
+
     <footer class="footer">
       <div class="container">
         <div class="content has-text-centered">

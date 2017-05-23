@@ -44,6 +44,7 @@ export default {
   created: function() {
     new MusicService()
       .then(data => {
+        console.log(data);
         this.music_data = data;
         console.info('Datos de música recuperados del servidor');
       });

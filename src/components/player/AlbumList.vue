@@ -4,7 +4,7 @@
       class="album" :class="{ 'is-active': album_selected === album.id }"
       @click="select(album)">
       <figure class="image is-128x128">
-        <img src="http://bulma.io/images/placeholders/128x128.png">
+        <img :src=" album.pic ? 'http://localhost:3000/files/pics/albums/'+album.id : 'http://bulma.io/images/placeholders/128x128.png'">
       </figure>
       <div class="album-subtitle">
         {{ album.name }}
@@ -24,11 +24,7 @@ export default {
       album_selected: ''
     }
   },
-  computed: {
-    picUrl: function() {
-      return `http://localhost:3000/files/pics/albums/2`;
-    }
-  },
+
   methods: {
     select: function(album) {
       this.album_selected = album.id;

@@ -4,25 +4,31 @@
 
     <div v-for="folder in folders">
       <div class="folder">
-        <input type="text" v-model="folder.path" placeholder="Ingrese el path del directorio nuevo">
-        <!-- <button class="button" title="Scanear carpeta">
+        <input class="input" type="text" v-model="folder.path"
+          :readonly="folder.scanned"
+          placeholder="Ingrese el path del directorio nuevo">
+        <button class="button" title="Scanear carpeta" @click="scan(folder)">
           <i class="fa fa-search"></i>
-        </button> -->
+        </button>
+        <button class="button" title="Eliminar carpeta" @click="removeFolder(folder)">
+          <i class="fa fa-trash"></i>
+        </button>
+        <p class="control" style="margin-left:10px">
+          <label class="checkbox">
+            <input type="checkbox" v-model="folder.search_art">
+            Find album art online
+          </label>
+        </p>
       </div>
+      <p v-show="folder.submitted && !folder.path.length" class="help is-danger">Debe ingresar un directorio válido</p>
+      <p v-show="folder.scanning === 'start'" class="help is-info">Scanning folder...</p>
+      <p v-show="folder.scanning === 'complete'" class="help is-success">Scanning complete!</p>
     </div>
 
-    <div v-show="!validateFolders">
-      <span>No puede guardar carpetas vacías</span>
-      <br>
-    </div>
-
+    <span v-if="!folders.length">No existen carpetas registradas  <br></span>
     <br>
-    <span v-if="!folders.length">No existen carpetas registradas  </span>
     <button class="button is-primary" title="Agregar carpeta" @click="addFolder">
       <i class="fa fa-plus"></i>
-    </button>
-    <button v-if="folders.length" class="button is-primary" @click="saveFolders">
-      Guardar
     </button>
     <button v-if="folders.length" class="button is-primary" @click="scanAll">
       Analizar Todas
@@ -34,44 +40,85 @@
 import * as axios from 'axios';
 import * as Cookies from 'js-cookie';
 
+function prepareFolders(folders) {
+  return folders.map(f => {
+    f.submitted = false;
+    f.scanning = 'off';
+    return f;
+  });
+}
+
 export default {
   name: 'admin',
   props: {},
   data () {
     return {
-      folders: []
-    }
-  },
-
-  computed: {
-    validateFolders: function() {
-      return this.folders.reduce((a,b) => a && b.path.length, true);
+      folders: [],
+      submitted: false
     }
   },
 
   methods: {
-    // scan: function(event) {
-    //   axios.post('http://localhost:3000/rest/scan', {path:this.path})
-    //     .then( response => {
-    //       console.log(response);
-    //     })
-    //     .catch( error => console.log(error) );
-    // }
+
     addFolder: function() {
       this.folders.push({
-        path: ''
+        path: '',
+        submitted: false,
+        scanned: false,
+        search_art: true,
+        scanning: 'off'
       });
     },
 
-    saveFolders: function() {
+    removeFolder: function(folder) {
+      this.folders = this.folders.filter(f => f.id != folder.id);
+      axios.delete(`http://localhost:3000/rest/folders/${folder.id}`)
+           .then(r => console.log(r))
+           .catch(e => console.error(e));
+    },
 
-    }
+    scan: function(f) {
+      f.scanning = 'start';
+      if (!f.scanned) {
+        axios.post('http://localhost:3000/rest/folders', f)
+          .then(r => {
+            if (r.status === 200) {
+              f.scanned = true;
+              axios.post(`http://localhost:3000/rest/folders/${r.data.id}/scan`)
+                  .then(r => {
+                    f.scanning = 'complete';
+                    console.info('Scanning complete!');
+                  })
+                  .catch(e => console.error(e));
+            }
+            else console.error('No se pudo guardar la carpeta en la base');
+          })
+          .catch(e => {
+            console.error(e)
+          });
+      }
+      else {
+        axios.post(`http://localhost:3000/rest/folders/${f.id}/scan`)
+          .then(r => {
+            f.scanning = 'complete';
+            console.info('Scanning complete!');
+          })
+          .catch(e => console.error(e));
+      }
+    },
+
+    scanAll: function() {
+      this.folders.forEach(f => {
+        this.scan(f);
+      });
+    },
+
   },
 
   created: function() {
     axios.get('http://localhost:3000/rest/folders')
       .then(folders => {
-        if (folders) this.folders = folders.data;
+        if (folders) this.folders = prepareFolders(folders.data);
       })
       .catch(e => {
         console.error(e);
@@ -87,7 +134,7 @@ export default {
   display: inline-flex;
 }
 
-.folder input {
-  width: 250px;
+.folder input[type="text"] {
+  width: 300px;
 }
 </style>

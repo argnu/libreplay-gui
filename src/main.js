@@ -9,8 +9,6 @@ import { MusicService } from './providers/music.service';
 
 
 Vue.config.productionTip = false;
-var MUSIC = new MusicService();
-
 
 /* eslint-disable no-new */
 new Vue({
