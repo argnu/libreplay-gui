@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <notification ref="notification" :msg="msg_notification"></notification>
     <div id="header" class="columns">
       <div class="column is-1">
         <img src="static/logo.png" alt="Liberascio"/>
@@ -33,8 +34,36 @@
 </template>
 
 <script>
+import Notification from '@/components/Notification';
+import { socket } from './socket';
+import * as _ from 'lodash';
+
 export default {
-  name: 'app'
+  name: 'app',
+
+  data()  {
+    return {
+      msg_notification: ''
+    }
+  },
+
+  created: function() {
+    let debounced = _.debounce(this.setNotification, 300, { 'maxWait': 1000 });
+    // socket.on('new-song', data => debounced(`Canción añadida: "${data.name}"`));
+    socket.on('new-album', data => debounced(`Album añadido: "${data.name}"`));
+    socket.on('new-arist', data => debounced(`Artista añadido: "${data.name}"`));
+  },
+
+  methods: {
+    setNotification: function(msg) {
+      this.msg_notification = msg;
+      this.$refs.notification.show = true;
+    }
+  },
+
+  components: {
+    Notification
+  }
 }
 </script>
 
