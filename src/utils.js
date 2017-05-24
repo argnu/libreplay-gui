@@ -3,3 +3,7 @@ let emailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(
 export function validateEmail(email) {
   return emailRE.test(email);
 }
+
+export function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}

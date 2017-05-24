@@ -18,8 +18,8 @@
           <td><i @click="add(song)" class="fa fa-plus"></i></td>
           <td>{{ song.track }}</td>
           <td>{{ song.name }}</td>
-          <td>{{ song.artistName}}</td>
-          <td>{{ song.albumName }}</td>
+          <td>{{ song.artist.name}}</td>
+          <td>{{ song.album.name }}</td>
           <td>{{ song.duration }}</td>
         </tr>
       </tbody>

@@ -6,6 +6,11 @@ function getSongUrl(song) {
   return 'http://localhost:3000/files/songs/' + song.id;
 }
 
+function getAlbumArt(song) {
+  console.log('http://localhost:3000/files/album-art/' + song.albumId);
+  return 'http://localhost:3000/files/album-art/' + song.albumId;
+}
+
 export class Player {
   constructor(ref, song) {
     if (!player && song) {
@@ -21,8 +26,9 @@ export class Player {
           // listmaxheight: '513px' ,                                             // Optional, max height of play list
           music: {
             title: song.name,
-            author: song.artistName,
-            url: getSongUrl(song)
+            author: song.artist.name,
+            url: getSongUrl(song),
+            pic: getAlbumArt(song)
           }
       });
       player = this.player;
@@ -39,8 +45,9 @@ export class Player {
   addSong(song) {
     this.player.addMusic([{
       title: song.name,
-      author: song.artistName,
-      url: getSongUrl(song)
+      author: song.artist.name,
+      url: getSongUrl(song),
+      pic: getAlbumArt(song)
     }]);
   }
 

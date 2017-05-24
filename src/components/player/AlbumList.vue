@@ -1,16 +1,17 @@
 <template>
   <div>
-    <div v-for="album in list" style="display:inline-block;padding:10px"
-      class="album" :class="{ 'is-active': album_selected === album.id }"
-      @click="select(album)">
-      <figure class="image is-128x128">
-        <img :src="album.art ? 'http://localhost:3000/files/pics/albums/'+album.id : 'http://bulma.io/images/placeholders/128x128.png'">
-      </figure>
-      <div class="album-subtitle">
-        {{ album.name }}
-        <br>
-        {{ album.artistName }}
-      </div>
+    <p class="menu-label">
+      Albums
+    </p>
+    <div v-for="album in list" class="album"  :class="{ 'is-active': selected === album.id }" @click="select(album.id)">
+        <figure class="image is-128x128">
+          <img :src="album.art ? 'http://localhost:3000/files/album-art/'+album.id : '/static/noart.jpg'">
+        </figure>
+        <div class="album-subtitle">
+          {{ album.name }}
+          <br>
+          {{ album.artistName }}
+        </div>
     </div>
   </div>
 </template>
@@ -21,18 +22,14 @@ export default {
   props: ['list'],
   data () {
     return {
-      album_selected: ''
+      selected: ''
     }
   },
 
   methods: {
     select: function(album) {
-      this.album_selected = album.id;
+      this.selected = album;
       this.$emit('select', album);
-    },
-
-    setSelect: function(album) {
-      this.album_selected = album;
     }
   }
 }
@@ -41,6 +38,9 @@ export default {
 <style>
 .album {
   cursor: pointer;
+  display: inline-block;
+  padding:10px;
+  max-width: 148px;
 }
 
 .album.is-active {
@@ -49,6 +49,7 @@ export default {
 }
 
 .album-subtitle {
-  font-size: 70%
+  font-size: 70%;
+  display: flex;
 }
 </style>

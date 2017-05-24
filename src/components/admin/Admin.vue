@@ -89,7 +89,6 @@ export default {
                     f.scanning = 'complete';
                     console.info('Scanning complete!');
                   })
-                  .catch(e => console.error(e));
             }
             else console.error('No se pudo guardar la carpeta en la base');
           })
@@ -98,12 +97,20 @@ export default {
           });
       }
       else {
-        axios.post(`http://localhost:3000/rest/folders/${f.id}/scan`)
+        axios.put(`http://localhost:3000/rest/folders/${f.id}`, f)
           .then(r => {
-            f.scanning = 'complete';
-            console.info('Scanning complete!');
+            if (r.status === 200) {
+              axios.post(`http://localhost:3000/rest/folders/${f.id}/scan`)
+                  .then(r => {
+                    f.scanning = 'complete';
+                    console.info('Scanning complete!');
+                  })
+            }
+            else console.error('No se pudo actualizar la carpeta en la base');
           })
-          .catch(e => console.error(e));
+          .catch(e => {
+            console.error(e)
+          });
       }
     },
 

@@ -2,18 +2,28 @@
 
 import * as axios from 'axios';
 
-let music_data;
+export function getArtists() {
+  return axios.get('http://localhost:3000/rest/artists', {responseType: 'json'})
+    .then( response => {
+        return Promise.resolve(response.data);
+      })
+    .catch(e => handleError(e));
+}
 
-function prepareData(data) {
-  data.forEach(a => {
-    a.albums.forEach(alb => {
-      alb.artistName = a.name;
-      alb.songs.forEach(s => {
-        s.artistName = a.name;
-        s.albumName = alb.name;
-      });
-    });
-  });
+export function getAlbums(q) {
+  return axios.get(`http://localhost:3000/rest/albums?${q || ''}`, {responseType: 'json'})
+    .then( response => {
+        return Promise.resolve(response.data);
+      })
+    .catch(e => handleError(e));
+}
+
+export function getSongs(q) {
+  return axios.get(`http://localhost:3000/rest/songs?${q || ''}`, {responseType: 'json'})
+    .then( response => {
+        return Promise.resolve(response.data);
+      })
+    .catch(e => handleError(e));
 }
 
 function handleError(error) {
@@ -21,22 +31,26 @@ function handleError(error) {
   return error;
 }
 
-export class MusicService {
-
-  constructor() {
-    if (!music_data) {
-      return axios.get('http://localhost:3000/rest/artists', {responseType: 'json'})
-        .then( response => {
-            this.music_data = response.data;
-            prepareData(this.music_data);
-            music_data = this.music_data;
-            return music_data;
-          })
-        .catch(e => handleError(e));
-    }
-    else {
-      this.music_data = music_data;
-      return Promise.resolve(music_data);
-    }
-  }
-}
+// export class MusicService {
+//
+//   constructor() {
+//     if (!music_data) {
+//       return axios.get('http://localhost:3000/rest/artists', {responseType: 'json'})
+//         .then( response => {
+//             this.music_data = response.data;
+//             prepareData(this.music_data);
+//             music_data = this.music_data;
+//             return music_data;
+//           })
+//         .catch(e => handleError(e));
+//     }
+//     else {
+//       this.music_data = music_data;
+//       return Promise.resolve(music_data);
+//     }
+//   }
+//
+//   getArtists() {
+//
+//   }
+// }

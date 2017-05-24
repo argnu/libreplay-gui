@@ -5,8 +5,8 @@
         Artistas
       </p>
       <ul class="menu-list">
-        <li><a :class="{ 'is-active': todos_active }" @click="select('all')">Todos los artistas</a></li>
-        <a :class="{ 'is-active': artist.is_active }" @click="select(artist)" v-for="artist in list">
+        <li><a :class="{ 'is-active': !selected }" @click="select('')">Todos los artistas</a></li>
+        <a :class="{ 'is-active': selected === artist.id }" @click="select(artist.id)" v-for="artist in list">
           {{ artist.name  }}
         </a>
       </ul>
@@ -18,29 +18,18 @@
 export default {
   name: 'ArtistList',
   props: ['list'],
+
   data () {
     return {
-      todos_active: true
+      selected: ''
     }
   },
+
   methods: {
-    select: function(artist) {
-      this.setActiveFalse();
-      if (artist == 'all') this.todos_active = true;
-      else {
-        this.todos_active = false;
-        artist.is_active = !artist.is_active;
-      }
-      this.$emit('select', artist);
-    },
-    setActiveFalse: function() {
-      this.list.forEach(a => {
-        a.is_active = false;
-      });
+    select: function(id) {
+      this.selected = id;
+      this.$emit('select', id);
     }
-  },
-  created: function() {
-    this.setActiveFalse();
   }
 }
 </script>

@@ -1,9 +1,13 @@
 <template>
-  <div v-show="show" id="notification">
-    <div class="notification is-primary">
-      <button class="delete" @click="show = !show"></button>
-      {{ msg }}
-    </div>
+  <div>
+    <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOutRight">
+      <div v-if="show" id="notification">
+        <div class="notification is-primary">
+          <button class="delete" @click="show = !show"></button>
+          {{ msg }}
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -18,6 +22,12 @@ export default {
     return {
       show: false
     }
+  },
+
+  methods: {
+    show: function() {
+      this.show = true;
+    }
   }
 }
 </script>
@@ -25,9 +35,9 @@ export default {
 <style>
 #notification {
 	opacity: 0.6;
-	position: absolute;
-	z-index: 101;
-	top: 20px;
-	right: 10px;
+  position: fixed;
+  z-index: 999;
+  top: 10px;
+  right: 10px;
 }
 </style>
