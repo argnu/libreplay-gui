@@ -1,25 +1,32 @@
 <template>
   <div class="container">
 
-    <div v-show="player" ref="player" class="aplayer"></div>
-
     <br>
 
-    <div class="tile is-ancestor" style="height:500px">
-      <div class="tile is-child is-3 box" style="overflow:auto">
-        <artist-list :list="artists_list" ref="artist_list" @select="selectArtist"></artist-list>
+    <div id="player-container">
+      <div class="tile is-ancestor" style="height:500px">
+        <div class="tile is-child is-3 box" style="overflow:auto">
+          <artist-list :list="artists_list" ref="artist_list" @select="selectArtist"></artist-list>
+        </div>
+        <div class="tile id-child is-9 box" style="overflow:auto">
+          <album-list :list="album_list" ref="album_list" @select="selectAlbum"></album-list>
+        </div>
       </div>
-      <div class="tile id-child is-9 box" style="overflow:auto">
-        <album-list :list="album_list" ref="album_list" @select="selectAlbum"></album-list>
+      <div class="tile box">
+        <song-list :list="songs_list" @add="addSong" @play="addAndPlay"></song-list>
       </div>
-    </div>
-    <div class="tile box">
-      <song-list :list="songs_list" @add="addSong" @play="addAndPlay"></song-list>
+
+      <div v-show="load_songs" style="width:50px;margin:0 auto">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Cargando canciones...</span>
+      </div>
     </div>
 
-    <div v-show="load_songs" style="width:50px;margin:0 auto">
-      <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-      <span class="sr-only">Cargando canciones...</span>
+    <div id="player">
+      <player ref="player"></player>
+    </div>
+    <div id="to-top" v-show="scroll_top">
+      <i class="fa fa-chevron-circle-up fa-3x" @click="scrollTop"></i>
     </div>
 
   </div>
@@ -29,7 +36,7 @@
 import ArtistList from '@/components/player/ArtistList';
 import AlbumList from '@/components/player/AlbumList';
 import SongList from '@/components/player/SongList';
-import { Player } from '../../Player';
+import Player from '@/components/player/Player';
 import * as MusicService from '../../providers/music.service';
 import * as utils from '../../utils';
 import * as _ from 'lodash';
@@ -44,9 +51,8 @@ export default {
       albums_all: [],
       album_list: [],
       songs_list: [],
-      playlist: [],
-      player: null,
       bottom: false,
+      scroll_top: false,
       load_songs: false,
       song_limit: 25
     }
@@ -55,6 +61,7 @@ export default {
   created: function() {
     window.addEventListener('scroll', () => {
       this.bottom = this.bottomVisible();
+      this.scroll_top = window.scrollY > 0;
     });
 
     socket.on('new-artist', artist => {
@@ -82,10 +89,6 @@ export default {
         console.info('Datos de música recuperados del servidor');
 
       });
-  },
-
-  mounted: function() {
-    this.player = new Player();
   },
 
   watch: {
@@ -119,7 +122,6 @@ export default {
 
     addSongToList: function() {
       if (this.$refs.artist_list && this.$refs.album_list) {
-        console.log(this.song_list_count , this.song_limit);
         if (this.song_list_count >= this.song_limit) {
           let song_query = `limit=${this.song_limit}&offset=${this.song_list_count + this.song_limit}`;
           if (this.$refs.artist_list.selected) song_query += `&artistId=${this.$refs.artist_list.selected}`;
@@ -135,39 +137,55 @@ export default {
       }
     },
 
-    nextSong: function() {
-      this.player.playNext();
-    },
-
-    addSong: function(song) {
-      this.player = new Player(this.$refs.player, song);
-    },
-
-    addAndPlay(song) {
-      this.player = new Player(this.$refs.player, song);
-      this.player.playLast();
-    },
-
     bottomVisible () {
       const visibleHeight = document.documentElement.clientHeight
       const pageHeight = document.documentElement.scrollHeight
       const scrolled = window.scrollY
       const reachedBottom = visibleHeight + scrolled >= pageHeight
       return reachedBottom || pageHeight < visibleHeight
+    },
+
+    addSong: function(song) {
+      this.$refs.player.addSong(song);
+    },
+
+    addAndPlay: function(song) {
+      this.$refs.player.addAndPlay(song);
+    },
+
+    scrollTop() {
+      utils.scrollToY(0, 1000, 'easeInOutQuint');
     }
   },
 
   components: {
     ArtistList,
     AlbumList,
-    SongList
+    SongList,
+    Player
   }
 }
 </script>
 
 <style>
+  @import '/static/APlayer.css';
+
   #div-artists, #div-albums {
     height: 300px;
     overflow: auto;
+  }
+  #player {
+    position: fixed;
+    min-width: 400px;
+    z-index: 999;
+    left: 10px;
+    bottom: 10px;
+    background-color: white;
+  }
+  #to-top {
+    position: fixed;
+    z-index: 999;
+    bottom: 10px;
+    right: 20px;
   }
 </style>
