@@ -20,7 +20,10 @@ export class APlayer {
             'single': ['0 0 38 32', 'M2.072 21.577c0.71-0.197 1.125-0.932 0.928-1.641-0.221-0.796-0.333-1.622-0.333-2.457 0-5.049 4.108-9.158 9.158-9.158h5.428c0.056-0.922 0.221-1.816 0.482-2.667h-5.911c-3.158 0-6.128 1.23-8.361 3.463s-3.463 5.203-3.463 8.361c0 1.076 0.145 2.143 0.431 3.171 0.164 0.59 0.7 0.976 1.284 0.976 0.117 0 0.238-0.016 0.357-0.049zM21.394 25.613h-12.409v-2.362c0-0.758-0.528-1.052-1.172-0.652l-5.685 3.522c-0.644 0.4-0.651 1.063-0.014 1.474l5.712 3.69c0.637 0.411 1.158 0.127 1.158-0.63v-2.374h12.409c3.158 0 6.128-1.23 8.361-3.463 1.424-1.424 2.44-3.148 2.99-5.029-0.985 0.368-2.033 0.606-3.125 0.691-1.492 3.038-4.619 5.135-8.226 5.135zM28.718 0c-4.985 0-9.026 4.041-9.026 9.026s4.041 9.026 9.026 9.026 9.026-4.041 9.026-9.026-4.041-9.026-9.026-9.026zM30.392 13.827h-1.728v-6.822c-0.635 0.576-1.433 1.004-2.407 1.285v-1.713c0.473-0.118 0.975-0.325 1.506-0.62 0.532-0.325 0.975-0.665 1.329-1.034h1.3v8.904z'],
             'menu': ['0 0 22 32', 'M20.8 14.4q0.704 0 1.152 0.48t0.448 1.12-0.48 1.12-1.12 0.48h-19.2q-0.64 0-1.12-0.48t-0.48-1.12 0.448-1.12 1.152-0.48h19.2zM1.6 11.2q-0.64 0-1.12-0.48t-0.48-1.12 0.448-1.12 1.152-0.48h19.2q0.704 0 1.152 0.48t0.448 1.12-0.48 1.12-1.12 0.48h-19.2zM20.8 20.8q0.704 0 1.152 0.48t0.448 1.12-0.48 1.12-1.12 0.48h-19.2q-0.64 0-1.12-0.48t-0.48-1.12 0.448-1.12 1.152-0.48h19.2z'],
             'remove': ['0 0 2000 2000', 'M704 736v576q0 14-9 23t-23 9h-64q-14 0-23-9t-9-23v-576q0-14 9-23t23-9h64q14 0 23 9t9 23zm256 0v576q0 14-9 23t-23 9h-64q-14 0-23-9t-9-23v-576q0-14 9-23t23-9h64q14 0 23 9t9 23zm256 0v576q0 14-9 23t-23 9h-64q-14 0-23-9t-9-23v-576q0-14 9-23t23-9h64q14 0 23 9t9 23zm128 724v-948h-896v948q0 22 7 40.5t14.5 27 10.5 8.5h832q3 0 10.5-8.5t14.5-27 7-40.5zm-672-1076h448l-48-117q-7-9-17-11h-317q-10 2-17 11zm928 32v64q0 14-9 23t-23 9h-96v948q0 83-47 143.5t-113 60.5h-832q-66 0-113-58.5t-47-141.5v-952h-96q-14 0-23-9t-9-23v-64q0-14 9-23t23-9h309l70-167q15-37 54-63t79-26h320q40 0 79 26t54 63l70 167h309q14 0 23 9t9 23z'],
-            'save': ['0 0 2000 2000', 'M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z']
+            'save': ['0 0 2000 2000', 'M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z'],
+            'previous': ['0 0 2000 2000', 'M1152 576v640q0 26-19 45t-45 19q-20 0-37-12l-448-320q-27-19-27-52t27-52l448-320q17-12 37-12 26 0 45 19t19 45zm256 800v-960q0-13-9.5-22.5t-22.5-9.5h-960q-13 0-22.5 9.5t-9.5 22.5v960q0 13 9.5 22.5t22.5 9.5h960q13 0 22.5-9.5t9.5-22.5zm256-960v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z' ],
+            'next': ['0 0 2000 2000', 'M1216 896q0 33-27 52l-448 320q-31 23-66 5-35-17-35-57v-640q0-40 35-57 35-18 66 5l448 320q27 19 27 52zm192 480v-960q0-14-9-23t-23-9h-960q-14 0-23 9t-9 23v960q0 14 9 23t23 9h960q14 0 23-9t9-23zm256-960v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z'],
+            'destroy': ['0 0 2000 2000', 'M1257 1111l-146 146q-10 10-23 10t-23-10l-169-169-169 169q-10 10-23 10t-23-10l-146-146q-10-10-10-23t10-23l169-169-169-169q-10-10-10-23t10-23l146-146q10-10 23-10t23 10l169 169 169-169q10-10 23-10t23 10l146 146q10 10 10 23t-10 23l-169 169 169 169q10 10 10 23t-10 23zm-1001 297h1280v-1024h-1280v1024zm1536-1120v1216q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-1216q0-66 47-113t113-47h1472q66 0 113 47t47 113z']
         };
         this.getSVG = (type) => {
             return `
@@ -192,9 +195,12 @@ export class APlayer {
                                 </div>
                             </div>
                         </div>
+                        <button type="button" class="aplayer-icon aplayer-icon-previous">` + this.getSVG('previous') + `</button>
+                        <button type="button" class="aplayer-icon aplayer-icon-next">` + this.getSVG('next') + `</button>
                         <button type="button" class="aplayer-icon aplayer-icon-mode">` + this.getSVG(this.mode) + `</button>
                         <button type="button" class="aplayer-icon aplayer-icon-menu">` + this.getSVG('menu') + `</button>
                         <button type="button" class="aplayer-icon aplayer-icon-save">` + this.getSVG('save') + `</button>
+                        <button type="button" class="aplayer-icon aplayer-icon-destroy">` + this.getSVG('destroy') + `</button>
                     </div>
                 </div>
             </div>
@@ -333,7 +339,7 @@ export class APlayer {
         const barHeight = 35;
         this.element.getElementsByClassName('aplayer-volume-bar-wrap')[0].addEventListener('click', (event) => {
             const e = event || window.event;
-            let percentage = (barHeight - e.clientY + getElementViewTop(volumeBarWrap)) / barHeight;
+            let percentage = (barHeight - e.clientY + getElementViewTop(volumeBarWrap) + window.scrollY) / barHeight;
             percentage = percentage > 0 ? percentage : 0;
             percentage = percentage < 1 ? percentage : 1;
             this.volume(percentage);
@@ -428,6 +434,18 @@ export class APlayer {
 
         this.element.getElementsByClassName('aplayer-icon-save')[0].addEventListener('click', () => {
           this.trigger('save', [this.option.music]);
+        });
+
+        this.element.getElementsByClassName('aplayer-icon-previous')[0].addEventListener('click', () => {
+          this.playPrev();
+        });
+
+        this.element.getElementsByClassName('aplayer-icon-next')[0].addEventListener('click', () => {
+          this.playNext();
+        });
+
+        this.element.getElementsByClassName('aplayer-icon-destroy')[0].addEventListener('click', () => {
+          this.trigger('destroy');
         });
 
         if (this.mode === 'random') {
@@ -800,7 +818,7 @@ export class APlayer {
      */
     getRandomOrder() {
         function random(min, max) {
-            if (max == null) {
+            if (max === null) {
                 max = min;
                 min = 0;
             }
@@ -865,12 +883,27 @@ export class APlayer {
         this.option.music = this.option.music.concat(newMusic);
 
         this.refreshPlaylist();
+        this.setActive(this.playIndex);
 
         if (!this.multiple) {
             this.multiple = true;
             this.element.classList.add('aplayer-withlist');
             this.audio.loop = false;
         }
+    }
+
+    removeMusic(i) {
+      if (i === this.playIndex) this.playNext();
+      this.option.music.splice(i, 1);
+      this.audios.splice(i, 1);
+      this.refreshPlaylist();
+      if (this.playIndex > i) this.setActive(this.playIndex - 1);
+      else this.setActive(this.playIndex);
+    }
+
+    playPrev() {
+      if (this.playIndex === 0) this.setMusic(this.option.music.length - 1);
+      else this.setMusic(this.playIndex - 1);
     }
 
     playNext() {
@@ -886,7 +919,6 @@ export class APlayer {
       if (this.element.getElementsByClassName('aplayer-list-light')[0]) {
           this.element.getElementsByClassName('aplayer-list-light')[0].classList.remove('aplayer-list-light');
       }
-      console.log(i);
       this.element.getElementsByClassName('aplayer-list')[0].getElementsByTagName('li')[i].classList.add('aplayer-list-light');
     }
 
@@ -911,14 +943,7 @@ export class APlayer {
         let button_remove = elems[i];
         button_remove.addEventListener('click', () => {
             if (this.option.music.length === 1 ) this.trigger('destroy');
-            else {
-              if (i === this.playIndex) this.playNext();
-              this.option.music.splice(i, 1);
-              this.audios.splice(i, 1);
-              this.refreshPlaylist();
-              if (this.playIndex > i) this.setActive(this.playIndex - 1);
-              else this.setActive(this.playIndex);
-            }
+            else this.removeMusic(i);
         });
       }
 

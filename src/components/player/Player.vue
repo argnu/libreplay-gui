@@ -13,7 +13,6 @@ function getSongUrl(song) {
 }
 
 function getAlbumArt(song) {
-  console.log('http://localhost:3000/files/album-art/' + song.albumId);
   return 'http://localhost:3000/files/album-art/' + song.albumId;
 }
 
@@ -37,6 +36,7 @@ export default {
           narrow: false,
           autoplay: true,
           listmaxheight: '300px',
+          mode: 'circulation',
           music: {
             title: song.name,
             author: song.artist.name,
@@ -50,13 +50,19 @@ export default {
       });
 
       this.player.on('destroy', () => {
-        this.player.destroy();
+        this.player.pause();
+        this.$refs.player.innerHTML = '';
         this.player = null;
       });
     },
 
+    reset: function() {
+      if (this.player) this.player.pause();
+      this.$refs.player.innerHTML = '';
+      this.player = null;
+    },
+
     addSong: function(song) {
-      console.log(this.player);
       if (!this.player) this.createPlayer(song);
       else {
         this.player.addMusic([{

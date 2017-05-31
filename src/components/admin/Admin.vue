@@ -1,44 +1,152 @@
 <template>
   <div class="container">
-    <h2 class="title">Scan Folders</h2>
-
-    <div v-for="folder in folders">
-      <div class="folder">
-        <input class="input" type="text" v-model="folder.path"
-          :readonly="folder.scanned"
-          placeholder="Ingrese el path del directorio nuevo">
-        <button class="button" title="Scanear carpeta" @click="scan(folder)">
-          <i class="fa fa-search"></i>
-        </button>
-        <button class="button" title="Eliminar carpeta" @click="removeFolder(folder)">
-          <i class="fa fa-trash"></i>
-        </button>
-        <p class="control" style="margin-left:10px">
-          <label class="checkbox">
-            <input type="checkbox" v-model="folder.search_art">
-            Find album art online
-          </label>
-        </p>
-      </div>
-      <p v-show="folder.submitted && !folder.path.length" class="help is-danger">Debe ingresar un directorio válido</p>
-      <p v-show="folder.scanning === 'start'" class="help is-info">Scanning folder...</p>
-      <p v-show="folder.scanning === 'complete'" class="help is-success">Scanning complete!</p>
+    <div class="tabs is-centered is-boxed">
+      <ul>
+        <li :class="{ 'is-active': show_content === 'scan' } ">
+          <a @click="show_content = 'scan'">
+            <span class="icon is-small"><i class="fa fa-search"></i></span>
+            <span>Scan Folders</span>
+          </a>
+        </li>
+        <li :class="{ 'is-active': show_content === 'user' } ">
+          <a @click="show_content = 'user'">
+            <span class="icon is-small"><i class="fa fa-user"></i></span>
+            <span>Users</span>
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <span v-if="!folders.length">No existen carpetas registradas  <br></span>
-    <br>
-    <button class="button is-primary" title="Agregar carpeta" @click="addFolder">
-      <i class="fa fa-plus"></i>
-    </button>
-    <button v-if="folders.length" class="button is-primary" @click="scanAll">
-      Analizar Todas
-    </button>
+    <div v-show="show_content == 'scan'" class="content">
+      <h2 class="title">Scan Folders</h2>
+
+      <div v-for="folder in folders">
+        <div class="folder">
+          <input class="input" type="text" v-model="folder.path"
+            :readonly="folder.scanned"
+            placeholder="Ingrese el path del directorio nuevo">
+          <button class="button" title="Scanear carpeta" @click="scan(folder)">
+            <i class="fa fa-search"></i>
+          </button>
+          <button class="button" title="Eliminar carpeta" @click="removeFolder(folder)">
+            <i class="fa fa-trash"></i>
+          </button>
+          <p class="control" style="margin-left:10px">
+            <label class="checkbox">
+              <input type="checkbox" v-model="folder.search_art">
+              Find album art online
+            </label>
+          </p>
+        </div>
+        <p v-show="folder.submitted && !folder.path.length" class="help is-danger">Debe ingresar un directorio válido</p>
+        <p v-show="folder.scanning === 'start'" class="help is-info">Scanning folder...</p>
+        <p v-show="folder.scanning === 'complete'" class="help is-success">Scanning complete!</p>
+      </div>
+
+      <span v-if="!folders.length">No existen carpetas registradas  <br></span>
+      <br>
+      <button class="button is-primary" title="Agregar carpeta" @click="addFolder">
+        <i class="fa fa-plus"></i>
+      </button>
+      <button v-if="folders.length" class="button is-primary" @click="scanAll">
+        Analizar Todas
+      </button>
+    </div>
+
+
+    <div class="content" v-show="show_content == 'user'">
+      <h2 class="title">Add User</h2>
+
+      <div style="width:50%">
+        <form v-on:submit.prevent="addUser">
+        <div class="field">
+            <label class="label">Email</label>
+            <p class="control has-icons-left has-icons-right">
+              <input class="input" :class="{ 'is-danger': (submitted && !validation.email) }"
+                type="text" placeholder="Ingrese el email" v-model="user.email">
+              <span class="icon is-small is-left">
+                <i class="fa fa-user"></i>
+              </span>
+              <span class="icon is-small is-right" v-show="submitted && !validation.email">
+                <i class="fa fa-warning"></i>
+              </span>
+            </p>
+            <p v-show="submitted && !validation.email" class="help is-danger">El email es inválido</p>
+          </div>
+
+          <div class="field">
+            <label class="label">Contraseña</label>
+            <p class="control has-icons-left has-icons-right">
+              <input class="input" :class="{ 'is-danger': (submitted && !validation.pass) }"
+                type="password" placeholder="Ingrese la contraseña" v-model="user.pass">
+              <span class="icon is-small is-left">
+                <i class="fa fa-user-secret"></i>
+              </span>
+              <span class="icon is-small is-right" v-show="submitted && !validation.pass">
+                <i class="fa fa-warning"></i>
+              </span>
+            </p>
+            <p v-show="submitted && !validation.pass" class="help is-danger">Debe ingresar una contraseña</p>
+          </div>
+
+          <div class="field">
+            <label class="label">Confirmar contraseña</label>
+            <p class="control has-icons-left has-icons-right">
+              <input class="input" :class="{ 'is-danger': (submitted && !validation.repass) }"
+                type="password" placeholder="Confirme la contraseña" v-model="user.repass">
+              <span class="icon is-small is-left">
+                <i class="fa fa-user-secret"></i>
+              </span>
+              <span class="icon is-small is-right" v-show="submitted && !validation.repass">
+                <i class="fa fa-warning"></i>
+              </span>
+            </p>
+            <p v-show="submitted && !validation.repass" class="help is-danger">Las contraseñas no coinciden</p>
+          </div>
+
+          <div class="field">
+            <label class="label">Nombre</label>
+            <p class="control">
+              <input class="input" :class="{ 'is-danger': (submitted && !validation.repass) }"
+                type="text" placeholder="Ingrese el nombre" v-model="user.first_name">
+            </p>
+          </div>
+
+          <div class="field">
+            <label class="label">Apellido</label>
+            <p class="control">
+              <input class="input" :class="{ 'is-danger': (submitted && !validation.repass) }"
+                type="text" placeholder="Ingrese el apellido" v-model="user.last_name">
+            </p>
+          </div>
+
+          <div class="field">
+            <p class="control">
+              <label class="checkbox">
+                <input type="checkbox" v-model="user.admin">
+                Usuario administrador
+              </label>
+            </p>
+          </div>
+
+          <div class="field">
+            <p class="control">
+              <button type="Submit" class="button is-primary" style="width:100%;">
+                <b>Enviar</b>
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 import * as axios from 'axios';
 import * as Cookies from 'js-cookie';
+import * as utils from '../../utils';
 
 function prepareFolders(folders) {
   return folders.map(f => {
@@ -54,12 +162,37 @@ export default {
   data () {
     return {
       folders: [],
-      submitted: false
+      submitted: false,
+      show_content: 'scan',
+      user: {
+        email: '',
+        pass: '',
+        repass: '',
+        first_name: '',
+        last_name: '',
+        admin: false
+      }
+    }
+  },
+
+  computed: {
+    validation: function () {
+      return {
+        email: utils.validateEmail(this.user.email),
+        pass: this.user.pass.length > 0,
+        repass: this.user.pass === this.user.repass
+      }
+    },
+
+    isValid: function () {
+      var validation = this.validation
+      return Object.keys(validation).every(function (key) {
+        return validation[key]
+      })
     }
   },
 
   methods: {
-
     addFolder: function() {
       this.folders.push({
         path: '',
@@ -143,5 +276,9 @@ export default {
 
 .folder input[type="text"] {
   width: 300px;
+}
+
+.content{
+  margin-left: 20%;
 }
 </style>
