@@ -12,10 +12,15 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
+      path: '/',
+      redirect: '/player'
+    },
+    {
       path: '/login',
       name: 'Login',
       component: Login,
       beforeEnter: (to, from, next) => {
+              Cookies.remove('LibrePlayUser');
         if (Cookies.get('LibrePlayUser')) next({ path: '/admin' });
         else next();
       }

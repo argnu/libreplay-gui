@@ -98,7 +98,7 @@ export default {
         axios.post('http://localhost:3000/rest/users/authenticate', this.user)
           .then(r => {
             if (r.status === 200) {
-              Cookies.set('LibrePlayUser', r.data.data.email, 1);
+              Cookies.set('LibrePlayUser', JSON.stringify(r.data), 1);
               this.$router.push({ path: '/admin' });
             }
             else this.notuser = true;

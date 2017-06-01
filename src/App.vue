@@ -1,37 +1,72 @@
 <template>
   <div>
-    <notification ref="notification" :msg="msg_notification"></notification>
-    <div id="app">
-      <div id="header" class="columns">
-        <div class="column is-1">
-          <img src="static/logo.png" alt="Liberascio"/>
-        </div>
-        <div class="column">
-          <h1 class="title">
-            LibrePlay
-          </h1>
-          <h2 class="subtitle">
-            Reproductor de música libre
-          </h2>
-        </div>
+
+    <nav class="nav">
+      <div class="nav-left">
+          <router-link to="/" class="nav-item">
+            <img src="static/logo.png" alt="Liberascio"/>
+            <span class="nav-item">LibrePlay</span>
+          </router-link>
       </div>
 
-      <br>
+      <div class="nav-center">
+      </div>
 
-      <router-view></router-view>
+      <div class="nav-right nav-menu">
+        <p class="nav-item" v-if="user">
+          <div class="has-dropdown" style="padding:5px">
+            <input type="checkbox" id="ch1">
+            <label class="button  " for="ch1">
+              <span> {{ username }}</span>
+              <span class="icon is-small">
+                <i class="fa fa-wrench"></i>
+              </span>
+            </label>
 
-      <br>
-
-      <footer class="footer" @click="p">
-        <div class="container">
-          <div class="content has-text-centered">
-            <p>
-              <strong>LibrePlay</strong> by <a href="http://liberascio.org">Liberascio</a>.
-            </p>
+            <div class="dropdown box">
+              <ul>
+                <li>
+                  Load Playlist <i class="fa fa-list"></i>
+                </li>
+                <hr>
+                <li v-if="user.data.admin">User Config <i class="fa fa-user"></i></li>
+                <hr>
+                <li v-if="user.data.admin">
+                  <router-link to="/admin">
+                    System Config <i class="fa fa-cog"></i>
+                  </router-link>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </footer>
+        </p>
+        <p class="nav-item" v-if="!user">
+          <a class="button">
+            <span>Sign in</span>
+            <span class="icon is-small">
+              <i class="fa fa-sign-in"></i>
+            </span>
+          </a>
+        </p>
+      </div>
+    </nav>
+
+    <notification ref="notification" :msg="msg_notification"></notification>
+
+    <div style="margin-top:5%">
+      <router-view></router-view>
     </div>
+
+
+    <!-- <footer class="footer" @click="p">
+      <div class="container">
+        <div class="content has-text-centered">
+          <p>
+            <strong>LibrePlay</strong> by <a href="http://liberascio.org">Liberascio</a>.
+          </p>
+        </div>
+      </div>
+    </footer> -->
   </div>
 </template>
 
@@ -40,35 +75,40 @@ import Notification from '@/components/Notification';
 import { socket } from './socket';
 import * as _ from 'lodash';
 import * as axios from 'axios';
+import * as Cookies from 'js-cookie';
 
 export default {
   name: 'app',
 
   data()  {
     return {
-      msg_notification: ''
+      msg_notification: '',
+      user: ''
     }
   },
 
   created: function() {
+    this.user = JSON.parse(Cookies.get('LibrePlayUser'));
     let debounced = _.debounce(this.setNotification, 300, { 'maxWait': 1000 });
-    // socket.on('new-song', data => debounced(`Canción añadida: "${data.name}"`));
     socket.on('new-artist', artist => debounced(`Artista añadido: "${artist.name}"`));
     socket.on('new-album', album => debounced(`Album añadido: "${album.name}"`));
   },
 
-  methods: {
-    p: function() {
-      axios.get('http://localhost:3000/probando');
-    },
+  computed: {
+    username: function() {
+      if (this.user) return this.user.data.first_name + ' ' + this.user.data.last_name;
+      else return '';
+    }
+  },
 
+  methods: {
     setNotification: function(msg) {
       this.msg_notification = msg;
       this.$refs.notification.show = true;
       setTimeout(() => {
         this.msg_notification = '';
         this.$refs.notification.show = false;
-      }, 2000)
+      }, 2000);
     }
   },
 
@@ -78,20 +118,59 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import '../node_modules/bulma/css/bulma.css';
 @import '../node_modules/font-awesome/css/font-awesome.min.css';
 @import '../node_modules/animate.css/animate.min.css';
 
-#header {
-  /*background-color: rgb(255,221,87);*/
-  border-style: solid;
-  border-color: rgb(255,221,87);
-  padding-top: 20px;
+
+.nav-item img {
+  margin-left: 30px;
+  height: auto;
 }
 
-#header img {
-  margin-left: 30px;
-  height: 70px;
+nav {
+  border-top-style: solid;
+  border-bottom-style: solid;
+  border-width: 0.5px;
+  border-color: orange;
+
 }
+
+/* wrapper */
+.has-dropdown input[type="checkbox"] {
+  display: none;
+}
+
+.has-dropdown input[type="checkbox"]:checked ~ .dropdown {
+  display: block;
+}
+
+/* dropdown basic */
+.dropdown {
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  text-align: right;
+}
+
+.dropdown hr {
+  margin: 5px 0px 5px 0px;
+  padding: 0;
+}
+
+.dropdown i {
+  margin-top: 5px;
+}
+
+.dropdown a {
+  color: rgb(74,74,74);
+}
+
+/* dropdown optional styling */
+.dropdown li:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
+
 </style>
