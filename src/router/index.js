@@ -20,7 +20,6 @@ export default new Router({
       name: 'Login',
       component: Login,
       beforeEnter: (to, from, next) => {
-              Cookies.remove('LibrePlayUser');
         if (Cookies.get('LibrePlayUser')) next({ path: '/admin' });
         else next();
       }

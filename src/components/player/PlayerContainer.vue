@@ -4,7 +4,7 @@
     <br>
 
     <div id="player-container">
-      <div class="tile is-ancestor" style="height:500px">
+      <div class="tile is-ancestor" style="min-height:300px;max-height:50%;height:50%">
         <div class="tile is-child is-3 box" style="overflow:auto">
           <artist-list :list="artists_list" ref="artist_list" @select="selectArtist"
                       @addArtistToPlaylist="addArtistToPlaylist" @playArtist="playArtist">
@@ -30,7 +30,7 @@
       <player ref="player"></player>
     </div>
 
-    <transition enter-active-class="animated rollIn"  leave-active-class="animated rollOut"> 
+    <transition enter-active-class="animated rollIn"  leave-active-class="animated rollOut">
       <div id="to-top" v-show="scroll_top">
         <i class="fa fa-chevron-circle-up fa-3x" @click="scrollTop"></i>
       </div>

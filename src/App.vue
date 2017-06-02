@@ -13,7 +13,7 @@
       </div>
 
       <div class="nav-right nav-menu">
-        <p class="nav-item" v-if="user">
+        <div class="nav-item" v-if="user">
           <div class="has-dropdown" style="padding:5px">
             <input type="checkbox" id="ch1">
             <label class="button  " for="ch1">
@@ -39,13 +39,12 @@
               </ul>
             </div>
           </div>
-        </p>
+        </div>
         <p class="nav-item" v-if="!user">
           <a class="button">
-            <span>Sign in</span>
-            <span class="icon is-small">
-              <i class="fa fa-sign-in"></i>
-            </span>
+            <router-link to="/login">
+              Sign In <i class="fa fa-sign-in"></i>
+            </router-link>
           </a>
         </p>
       </div>
@@ -83,12 +82,13 @@ export default {
   data()  {
     return {
       msg_notification: '',
-      user: ''
+      user: null
     }
   },
 
   created: function() {
-    this.user = JSON.parse(Cookies.get('LibrePlayUser'));
+    this.user = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
+    console.log(this.user);
     let debounced = _.debounce(this.setNotification, 300, { 'maxWait': 1000 });
     socket.on('new-artist', artist => debounced(`Artista añadido: "${artist.name}"`));
     socket.on('new-album', album => debounced(`Album añadido: "${album.name}"`));
