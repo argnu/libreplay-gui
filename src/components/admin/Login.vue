@@ -99,7 +99,7 @@ export default {
           .then(r => {
             if (r.status === 200) {
               Cookies.set('LibrePlayUser', JSON.stringify(r.data), 1);
-              this.$router.push({ path: '/admin' });
+              this.$router.push({ path: '/', params: { user_id: r.data.data.id } });
             }
             else this.notuser = true;
           })

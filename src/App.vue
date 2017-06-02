@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="clickGral($event)">
 
     <nav class="nav">
       <div class="nav-left">
@@ -15,8 +15,8 @@
       <div class="nav-right nav-menu">
         <div class="nav-item" v-if="user">
           <div class="has-dropdown" style="padding:5px">
-            <input type="checkbox" id="ch1">
-            <label class="button  " for="ch1">
+            <input type="checkbox" id="drop-user" ref="check_dropdown">
+            <label class="button  " for="drop-user">
               <span> {{ username }}</span>
               <span class="icon is-small">
                 <i class="fa fa-wrench"></i>
@@ -36,6 +36,8 @@
                     System Config <i class="fa fa-cog"></i>
                   </router-link>
                 </li>
+                <hr>
+                <li @click="signOut()">Sign Out <i class="fa fa-sign-out"></i></li>
               </ul>
             </div>
           </div>
@@ -88,7 +90,6 @@ export default {
 
   created: function() {
     this.user = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
-    console.log(this.user);
     let debounced = _.debounce(this.setNotification, 300, { 'maxWait': 1000 });
     socket.on('new-artist', artist => debounced(`Artista añadido: "${artist.name}"`));
     socket.on('new-album', album => debounced(`Album añadido: "${album.name}"`));
@@ -109,6 +110,18 @@ export default {
         this.msg_notification = '';
         this.$refs.notification.show = false;
       }, 2000);
+    },
+
+    clickGral: function(e) {
+      if (e.target.id != 'drop-user') {
+        if (this.$refs.check_dropdown) this.$refs.check_dropdown.checked = false;
+      }
+    },
+
+    signOut: function() {
+      Cookies.remove('LibrePlayUser');
+      this.user = null;
+      this.$router.push({ path: '/' })
     }
   },
 
