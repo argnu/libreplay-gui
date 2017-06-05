@@ -71,11 +71,24 @@
         </div>
 
         <div v-if="menu_item_selected == 'admin-users'" class="box">
-          <list-users></list-users>
+          <div class="modal" :class="{ 'is-active': activate_modal }">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Edit User</p>
+                <button class="delete" @click="activate_modal = false"></button>
+              </header>
+              <section class="modal-card-body">
+                <user-form :fields="user_fields" :user="user_selected" @submit="editUser"></user-form>
+              </section>
+            </div>
+          </div>
+
+          <list-users @edit="showEdit" ref="list_users"></list-users>
         </div>
 
         <div v-if="menu_item_selected == 'add-user'" class="box">
-          <add-user></add-user>
+          <add-user fields="all"></add-user>
         </div>
       </div>
     </div>
@@ -89,6 +102,7 @@ import * as Cookies from 'js-cookie';
 import * as utils from '../../utils';
 import ListUsers from '@/components/admin/ListUsers';
 import AddUser from '@/components/admin/AddUser';
+import UserForm from '@/components/admin/UserForm';
 
 function prepareFolders(folders) {
   return folders.map(f => {
@@ -105,11 +119,40 @@ export default {
     return {
       folders: [],
       show_content: 'scan',
-      menu_item_selected: 'admin-folders'
+      menu_item_selected: 'admin-folders',
+      user_selected: null,
+      activate_modal: false,
+      admin: null,
+      user_fields: {
+        first_name: true,
+        last_name: true,
+        email: true,
+        admin: true
+      }
     }
   },
 
   methods: {
+    showEdit: function(user) {
+      this.user_selected = user;
+      this.activate_modal = true;
+    },
+
+    editUser: function(user) {
+      axios.put(`http://localhost:3000/rest/users/${this.user_selected.id}/?access_token=${this.admin.token}`, { user: user })
+           .then(r => {
+             if (r.status == 200) {
+               this.$refs.list_users.refresh();
+               alert('Usuario modificado exitosamente!');
+               this.activate_modal = false;
+             }
+           })
+           .catch(e => {
+             console.error(e);
+             alert('Error de conexión con servidor');
+           });
+    },
+
     addFolder: function() {
       this.folders.push({
         path: '',
@@ -173,6 +216,7 @@ export default {
   },
 
   created: function() {
+    this.admin = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
     axios.get('http://localhost:3000/rest/folders')
       .then(folders => {
         if (folders && !folders.data.error) this.folders = prepareFolders(folders.data);
@@ -184,7 +228,8 @@ export default {
 
   components: {
     ListUsers,
-    AddUser
+    AddUser,
+    UserForm
   }
 
 }
