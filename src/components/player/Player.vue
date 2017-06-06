@@ -41,12 +41,13 @@ export default {
             title: song.name,
             author: song.artist.name,
             url: getSongUrl(song),
-            pic: getAlbumArt(song)
+            pic: getAlbumArt(song),
+            id: song.id
           }
       });
 
       this.player.on('save', (list) => {
-        console.log(list);
+        this.$emit('savePlaylist', list);
       });
 
       this.player.on('destroy', () => {
@@ -69,7 +70,8 @@ export default {
           title: song.name,
           author: song.artist.name,
           url: getSongUrl(song),
-          pic: getAlbumArt(song)
+          pic: getAlbumArt(song),
+          id: song.id
         }]);
       }
     },

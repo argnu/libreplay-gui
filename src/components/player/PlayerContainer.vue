@@ -1,10 +1,74 @@
 <template>
   <div class="container">
 
-    <br>
+    <div class="modal" :class="{ 'is-active': modal_playlist }" v-if="user">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Saved Playlists</p>
+          <button class="delete" @click="modal_playlist = false"></button>
+        </header>
+        <section class="modal-card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="playlist in playlists">
+                <td>{{ playlist.name }}</td>
+                <td style="width:40px"><i @click="playPlaylist(playlist)" class="fa fa-play"></i></td>
+                <td style="width:40px"><i @click="addPlaylist(playlist)" class="fa fa-plus"></i></td>
+                <td style="width:40px"><i @click="removePlaylist(playlist)" class="fa fa-trash"></i></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+
+    <div class="modal" :class="{ 'is-active': modal_save_playlist }" v-if="user">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Save Playlist</p>
+          <button class="delete" @click="modal_save_playlist = false"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field">
+            <p class="control has-icons-left has-icons-right">
+              <input class="input"  type="text" placeholder="Nombre del playlist..." v-model="playlist_name">
+              <span class="icon is-small is-left">
+                <i class="fa fa-list"></i>
+              </span>
+              <!-- <span class="icon is-small is-right" v-show="submitted && !validation.email">
+                <i class="fa fa-warning"></i>
+              </span> -->
+            </p>
+          </div>
+          <div class="field">
+            <p class="control">
+              <button @click="savePlaylist" type="button" class="button is-primary" style="width:100%;">
+                <b>Save</b>
+              </button>
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div v-if="user" style="margin:10px 0 20px 0">
+      <button class="button" @click="getPlaylists">
+        <i class="fa fa-list" style="margin-right:10px"></i> Listas de Reproducción
+      </button>
+    </div>
 
     <div id="player-container">
-      <div class="tile is-ancestor" style="min-height:300px;max-height:50%;height:50%">
+      <div id="albums-container" class="tile is-ancestor">
         <div class="tile is-child is-3 box" style="overflow:auto">
           <artist-list :list="artists_list" ref="artist_list" @select="selectArtist"
                       @addArtistToPlaylist="addArtistToPlaylist" @playArtist="playArtist">
@@ -17,7 +81,9 @@
         </div>
       </div>
       <div class="tile box">
-        <song-list :list="songs_list" @add="addSongToPlaylist" @play="addAndPlay" @search="searchSongs"></song-list>
+        <song-list :list="songs_list" @add="addSongToPlaylist" @play="addAndPlay" @search="searchSongs"
+                   @playAll="addAndPlayAll" @addAll=addAll>
+        </song-list>
       </div>
 
       <div v-show="load_songs" style="width:50px;margin:0 auto">
@@ -27,7 +93,7 @@
     </div>
 
     <div id="player">
-      <player ref="player"></player>
+      <player ref="player" @savePlaylist="savePlaylistModal"></player>
     </div>
 
     <transition enter-active-class="animated rollIn"  leave-active-class="animated rollOut">
@@ -48,6 +114,8 @@ import * as MusicService from '../../providers/music.service';
 import * as utils from '../../utils';
 import * as _ from 'lodash';
 import { socket } from '../../socket';
+import * as axios from 'axios';
+import * as Cookies from 'js-cookie';
 
 export default {
   name: 'PlayerContainer',
@@ -62,11 +130,20 @@ export default {
       scroll_top: false,
       load_songs: false,
       song_limit: 25,
-      search_song: ''
+      search_song: '',
+      modal_playlist: false,
+      modal_save_playlist: false,
+      save_playlist_songs: [],
+      playlist_name: '',
+      playlists: [],
+      user: null
     }
   },
 
   created: function() {
+    this.user = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
+    console.log(this.user);
+
     window.addEventListener('scroll', () => {
       this.bottom = this.bottomVisible();
       this.scroll_top = window.scrollY > 0;
@@ -163,6 +240,18 @@ export default {
       return reachedBottom || pageHeight < visibleHeight
     },
 
+    addAndPlayAll: function(songs) {
+      this.$refs.player.addAndPlay(songs[0]);
+      let total = songs.length;
+      for(let i=1; i<total; i++) this.$refs.player.addSong(songs[i]);
+    },
+
+    addAll: function(songs) {
+      songs.forEach(s => {
+        this.$refs.player.addSong(s);
+      });
+    },
+
     addSongToPlaylist: function(song) {
       this.$refs.player.addSong(song);
     },
@@ -213,9 +302,70 @@ export default {
                   });
     },
 
+    playPlaylist: function(playlist){
+      console.log(playlist.songs);
+      let total = playlist.songs.length;
+      this.$refs.player.reset();
+      for (let i = 0; i < total; i++) {
+        if (i === 0) this.$refs.player.addAndPlay(playlist.songs[i]);
+        else this.addSongToPlaylist(playlist.songs[i]);
+      }
+      this.modal_playlist = false;
+    },
+
+    addPlaylist: function(playlist){
+      let total = playlist.songs.length;
+      for (let i = 0; i < total; i++) {
+        this.addSongToPlaylist(playlist.songs[i]);
+      }
+      this.modal_playlist = false;
+    },
+
     scrollTop() {
       utils.scrollToY(0, 1000, 'easeInOutQuint');
-    }
+    },
+
+    getPlaylists: function() {
+      axios.get(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
+           .then(r => {
+             this.playlists = r.data.playlists
+             this.modal_playlist = true;
+           })
+           .catch(e => console.error(e));
+    },
+
+    savePlaylistModal: function(songs) {
+      this.modal_save_playlist = true;
+      this.save_playlist_songs = songs;
+    },
+
+    savePlaylist: function() {
+      let playlist = {
+        name: this.playlist_name,
+        songs: this.save_playlist_songs
+      }
+
+      axios.put(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
+           .then(r => {
+             this.modal_save_playlist = false;
+             this.save_playlist_songs = [];
+             this.playlist_name = '';
+           })
+           .catch(e => {
+             if (e.response.status === 409) alert("Error: playlist ya existe!");
+             else alert('Error en servidor')
+           });
+    },
+
+    removePlaylist: function(playlist) {
+      axios.delete(`http://localhost:3000/rest/users/${this.user.data.id}/playlists/${playlist.id}?access_token=${this.user.token}`)
+           .then(r => {
+             this.playlists = this.playlists.filter(p => p == playlist.id);
+           })
+           .catch(e => {
+             if (e.response.status === 404) alert('No existe el playlist');
+           });
+    },
   },
 
   components: {
@@ -230,10 +380,6 @@ export default {
 <style>
   @import '/static/APlayer.css';
 
-  #div-artists, #div-albums {
-    height: 300px;
-    overflow: auto;
-  }
   #player {
     position: fixed;
     min-width: 400px;
@@ -242,6 +388,11 @@ export default {
     bottom: 10px;
     background-color: white;
   }
+
+  #albums-container {
+    max-height: 400px;
+  }
+
   #to-top {
     position: fixed;
     z-index: 999;

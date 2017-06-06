@@ -19,6 +19,15 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td><i @click="addAndPlayAll()" class="fa fa-play"></i></td>
+          <td><i @click="addAll()" class="fa fa-plus"></i></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
         <tr @click="select(song)" type="button" v-for="song in list_show">
           <td><i @click="addAndPlay(song)" class="fa fa-play"></i></td>
           <td><i @click="add(song)" class="fa fa-plus"></i></td>
@@ -62,6 +71,14 @@ export default {
 
     add: function(song) {
       this.$emit('add', song);
+    },
+
+    addAndPlayAll: function() {
+      this.$emit('playAll', this.list_show);
+    },
+
+    addAll: function() {
+      this.$emit('addAll', this.list_show);
     },
 
     filter: function() {

@@ -88,7 +88,7 @@
         </div>
 
         <div v-if="menu_item_selected == 'add-user'" class="box">
-          <add-user fields="all"></add-user>
+          <add-user></add-user>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div @click="clickGral($event)">
+  <div @click="clickGral($event)" style="margin-top: 5px">
 
     <nav class="nav">
       <div class="nav-left">
@@ -25,10 +25,6 @@
 
             <div class="dropdown box" ref="body_dropdown">
               <ul>
-                <li>
-                  Load Playlist <i class="fa fa-list"></i>
-                </li>
-                <hr>
                 <li @click="activate_modal = true">User Config <i class="fa fa-user"></i>
                 <hr>
                 </li>
@@ -55,9 +51,9 @@
 
     <notification ref="notification" :msg="msg_notification"></notification>
 
-    <div>
+    <div style="margin-top:20px">
 
-      <div class="modal" :class="{ 'is-active': activate_modal }">
+      <div class="modal" :class="{ 'is-active': activate_modal }" v-if="user">
         <div class="modal-background"></div>
         <div class="modal-card">
           <header class="modal-card-head">
@@ -101,6 +97,7 @@ export default {
     return {
       msg_notification: '',
       activate_modal: false,
+      playlists: [],
       user: null,
       user_fields: {
         first_name: true,

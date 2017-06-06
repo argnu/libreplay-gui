@@ -2,7 +2,7 @@
 <div>
   <h2 class="title" style="text-align:center">Add User</h2>
   <div>
-    <user-form @submit="addUser" ref="form"></user-form>
+    <user-form @submit="addUser" ref="form" fields="all"></user-form>
   </div>
 </div>
 
