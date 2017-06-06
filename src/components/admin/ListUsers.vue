@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in users">
+        <tr v-for="(user, i) in users">
           <td>{{ user.first_name }}</td>
           <td>{{ user.last_name }}</td>
           <td>{{ user.email }}</td>
@@ -22,7 +22,7 @@
           <td>{{ user.updatedAt | formatDate}}</td>
           <td>{{ user.admin | isAdmin }}</td>
           <td><i @click="edit(user)" class="fa fa-pencil"></i></td>
-          <td><i @click="remove(user)" class="fa fa-trash"></i></td>
+          <td><i @click="remove(i)" class="fa fa-trash"></i></td>
         </tr>
       </tbody>
     </table>
@@ -61,7 +61,7 @@ export default {
   created: function() {
     this.admin = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
     if (this.admin) {
-      axios.get(`http://localhost:3000/rest/users?access_token=${this.admin.token}`)
+      axios.get(`https://localhost:3000/rest/users?access_token=${this.admin.token}`)
            .then(r => {
              this.users = r.data.data;
            });
@@ -69,11 +69,12 @@ export default {
   },
 
   methods: {
-    remove: function(user) {
-      axios.delete(`http://localhost:3000/rest/users/${user.id}/?access_token=${this.admin.token}`)
+    remove: function(i) {
+      let user = this.users[i];
+      axios.delete(`https://localhost:3000/rest/users/${user.id}/?access_token=${this.admin.token}`)
            .then(r => {
              console.log(r);
-             this.users = this.users.filter(u => u.id != user.id);
+             this.users.splice(i, 1);
            })
            .catch(e => console.log(e));
     },
@@ -84,7 +85,7 @@ export default {
 
     refresh() {
       if (this.admin) {
-        axios.get(`http://localhost:3000/rest/users?access_token=${this.admin.token}`)
+        axios.get(`https://localhost:3000/rest/users?access_token=${this.admin.token}`)
              .then(r => {
                this.users = r.data.data;
              });

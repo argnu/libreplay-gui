@@ -123,7 +123,7 @@ export default {
 
   methods: {
     editUser: function(user) {
-      axios.put(`http://localhost:3000/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
+      axios.put(`https://localhost:3000/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
            .then(r => {
              if (r.status == 200) {
                for(let key in user) {

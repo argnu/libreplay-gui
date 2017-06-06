@@ -19,11 +19,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="playlist in playlists">
+              <tr v-for="(playlist, i) in playlists">
                 <td>{{ playlist.name }}</td>
                 <td style="width:40px"><i @click="playPlaylist(playlist)" class="fa fa-play"></i></td>
                 <td style="width:40px"><i @click="addPlaylist(playlist)" class="fa fa-plus"></i></td>
-                <td style="width:40px"><i @click="removePlaylist(playlist)" class="fa fa-trash"></i></td>
+                <td style="width:40px"><i @click="removePlaylist(i)" class="fa fa-trash"></i></td>
               </tr>
             </tbody>
           </table>
@@ -142,7 +142,6 @@ export default {
 
   created: function() {
     this.user = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
-    console.log(this.user);
 
     window.addEventListener('scroll', () => {
       this.bottom = this.bottomVisible();
@@ -303,12 +302,11 @@ export default {
     },
 
     playPlaylist: function(playlist){
-      console.log(playlist.songs);
-      let total = playlist.songs.length;
+      let total = playlist.listsongs.length;
       this.$refs.player.reset();
       for (let i = 0; i < total; i++) {
-        if (i === 0) this.$refs.player.addAndPlay(playlist.songs[i]);
-        else this.addSongToPlaylist(playlist.songs[i]);
+        if (i === 0) this.$refs.player.addAndPlay(playlist.listsongs[i].song);
+        else this.addSongToPlaylist(playlist.listsongs[i].song);
       }
       this.modal_playlist = false;
     },
@@ -326,7 +324,7 @@ export default {
     },
 
     getPlaylists: function() {
-      axios.get(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
+      axios.get(`https://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
            .then(r => {
              this.playlists = r.data.playlists
              this.modal_playlist = true;
@@ -336,7 +334,13 @@ export default {
 
     savePlaylistModal: function(songs) {
       this.modal_save_playlist = true;
-      this.save_playlist_songs = songs;
+      this.save_playlist_songs = [];
+      for (let i = 0; i < songs.length; i++) {
+        this.save_playlist_songs.push({
+          id: songs[i].id,
+          order: i
+        });
+      }
     },
 
     savePlaylist: function() {
@@ -345,7 +349,7 @@ export default {
         songs: this.save_playlist_songs
       }
 
-      axios.put(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
+      axios.put(`https://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
            .then(r => {
              this.modal_save_playlist = false;
              this.save_playlist_songs = [];
@@ -357,10 +361,11 @@ export default {
            });
     },
 
-    removePlaylist: function(playlist) {
-      axios.delete(`http://localhost:3000/rest/users/${this.user.data.id}/playlists/${playlist.id}?access_token=${this.user.token}`)
+    removePlaylist: function(i) {
+      let playlist = this.playlists[i];
+      axios.delete(`https://localhost:3000/rest/playlists/${playlist.id}?access_token=${this.user.token}`)
            .then(r => {
-             this.playlists = this.playlists.filter(p => p == playlist.id);
+             this.playlists.splice(i, 1);
            })
            .catch(e => {
              if (e.response.status === 404) alert('No existe el playlist');

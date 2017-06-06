@@ -83,7 +83,7 @@ export default {
 }
 
 .artist-link:hover i{
-  display:inline-flex;
+  display: inline-flex;
 }
 
 .artist-link i:hover {

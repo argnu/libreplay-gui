@@ -7,27 +7,27 @@
             General
           </p>
           <p class="menu-label">
-            Sources
+            Fuentes
           </p>
           <ul class="menu-list">
             <li>
               <a :class="{ 'is-active': menu_item_selected == 'admin-folders' }"
                   @click="menu_item_selected='admin-folders'">
-                Admin Folders
+                Administrar Carpetas
               </a>
             </li>
           </ul>
           <p class="menu-label">
-            Users
+            Usuarios
           </p>
           <ul class="menu-list">
             <li><a :class="{ 'is-active': menu_item_selected == 'admin-users' }"
                 @click="menu_item_selected='admin-users'">
-              Admin Users
+              Administrar Usuarios
             </a></li>
             <li><a :class="{ 'is-active': menu_item_selected == 'add-user' }"
                   @click="menu_item_selected='add-user'">
-              Add User
+              Agregar Usuario
             </a></li>
           </ul>
         </aside>
@@ -35,30 +35,44 @@
 
       <div class="column">
         <div v-if="menu_item_selected == 'admin-folders'" class="box">
-          <h2 class="title">Scan Folders</h2>
+          <h2 class="title">Escanear Carpetas</h2>
 
-          <div v-for="folder in folders">
-            <div class="folder">
-              <input class="input" type="text" v-model="folder.path"
-                :readonly="folder.scanned"
-                placeholder="Ingrese el path del directorio nuevo">
-              <button class="button" title="Scanear carpeta" @click="scan(folder)">
-                <i class="fa fa-search"></i>
-              </button>
-              <button class="button" title="Eliminar carpeta" @click="removeFolder(folder)">
-                <i class="fa fa-trash"></i>
-              </button>
-              <p class="control" style="margin-left:10px">
-                <label class="checkbox">
+          <table v-if="folders.length" class="table">
+            <thead>
+              <tr>
+                <th>Directorio</th>
+                <th>Último Escaneo</th>
+                <th>Escaneo Completo</th>
+                <th>Buscar Carátula</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(folder, i) in folders">
+                <td>
+                  <input class="input" type="text" v-model="folder.path"
+                        :readonly="folder.scanned"
+                        placeholder="Ingrese el path del directorio nuevo">
+                  <p v-show="folder.submitted && !folder.path.length" class="help is-danger">Debe ingresar un directorio válido</p>
+                  <p v-show="folder.scanning === 'start'" class="help is-info">Scanning folder...</p>
+                  <p v-show="folder.scanning === 'complete'" class="help is-success">Scanning complete!</p>
+                  <p v-show="folder.scanning === 'error'" class="help is-danger">Scanning Error. Check parameters and try again</p>
+                </td>
+                <td>{{ folder.last_scan | formatDate}}</td>
+                <td>{{ folder.scan_finished | sino }}</td>
+                <td>
                   <input type="checkbox" v-model="folder.search_art">
-                  Find album art online
-                </label>
-              </p>
-            </div>
-            <p v-show="folder.submitted && !folder.path.length" class="help is-danger">Debe ingresar un directorio válido</p>
-            <p v-show="folder.scanning === 'start'" class="help is-info">Scanning folder...</p>
-            <p v-show="folder.scanning === 'complete'" class="help is-success">Scanning complete!</p>
-          </div>
+                </td>
+                <td>
+                    <i title="Scanear carpeta" @click="scan(folder)" class="fa fa-search icon-button"></i>
+                </td>
+                <td>
+                    <i class="fa fa-trash icon-button" title="Eliminar carpeta" @click="removeFolder(i)"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           <span v-if="!folders.length">No existen carpetas registradas  <br></span>
           <br>
@@ -100,6 +114,7 @@
 import * as axios from 'axios';
 import * as Cookies from 'js-cookie';
 import * as utils from '../../utils';
+import { socket } from '../../socket';
 import ListUsers from '@/components/admin/ListUsers';
 import AddUser from '@/components/admin/AddUser';
 import UserForm from '@/components/admin/UserForm';
@@ -132,6 +147,23 @@ export default {
     }
   },
 
+  filters: {
+    formatDate: function(value) {
+      if (value) {
+        let date = new Date(value);
+        let day = date.getDate().toString();
+        let month = (date.getMonth() + 1).toString();
+        return `${day.length == 1 ? `0${day}` : day}/${month.length == 1 ? `0${month}` : month}/${date.getFullYear()}`;
+      }
+      else return '';
+    },
+
+    sino: function(value) {
+      if (value) return 'Sí';
+      else return 'No';
+    }
+  },
+
   methods: {
     showEdit: function(user) {
       this.user_selected = user;
@@ -139,7 +171,7 @@ export default {
     },
 
     editUser: function(user) {
-      axios.put(`http://localhost:3000/rest/users/${this.user_selected.id}/?access_token=${this.admin.token}`, { user: user })
+      axios.put(`https://localhost:3000/rest/users/${this.user_selected.id}/?access_token=${this.admin.token}`, { user: user })
            .then(r => {
              if (r.status == 200) {
                this.$refs.list_users.refresh();
@@ -159,51 +191,63 @@ export default {
         submitted: false,
         scanned: false,
         search_art: true,
-        scanning: 'off'
+        scanning: 'off',
       });
     },
 
-    removeFolder: function(folder) {
-      this.folders = this.folders.filter(f => f.id != folder.id);
-      axios.delete(`http://localhost:3000/rest/folders/${folder.id}`)
-           .then(r => console.log(r))
-           .catch(e => console.error(e));
+    removeFolder: function(i) {
+      let folder = this.folders[i];
+      this.folders.splice(i, 1);
+      if (folder.id) {
+        axios.delete(`https://localhost:3000/rest/folders/${folder.id}`)
+             .then(r => console.log(r))
+             .catch(e => console.error(e));
+      }
     },
 
     scan: function(f) {
-      f.scanning = 'start';
-      if (!f.scanned) {
-        axios.post('http://localhost:3000/rest/folders', f)
-          .then(r => {
-            if (r.status === 200) {
-              f.scanned = true;
-              axios.post(`http://localhost:3000/rest/folders/${r.data.id}/scan`)
-                  .then(r => {
-                    f.scanning = 'complete';
-                    console.info('Scanning complete!');
-                  })
-            }
-            else console.error('No se pudo guardar la carpeta en la base');
-          })
-          .catch(e => {
-            console.error(e)
-          });
-      }
+      if (!f.path) f.scanning = 'error';
       else {
-        axios.put(`http://localhost:3000/rest/folders/${f.id}`, f)
-          .then(r => {
-            if (r.status === 200) {
-              axios.post(`http://localhost:3000/rest/folders/${f.id}/scan`)
-                  .then(r => {
-                    f.scanning = 'complete';
-                    console.info('Scanning complete!');
-                  })
-            }
-            else console.error('No se pudo actualizar la carpeta en la base');
-          })
-          .catch(e => {
-            console.error(e)
-          });
+        f.scanning = 'start';
+        if (!f.id) {
+          axios.post('https://localhost:3000/rest/folders', f)
+            .then(r => {
+              if (r.status === 200) {
+                f.id = r.data.id;
+                axios.post(`https://localhost:3000/rest/folders/${r.data.id}/scan`)
+                    .then(r => {
+                      console.info('Scanning started!');
+                    })
+              }
+              else {
+                f.scanning = 'error';
+                console.error('No se pudo guardar la carpeta en la base');
+              }
+            })
+            .catch(e => {
+              f.scanning = 'error';
+              console.error(e)
+            });
+        }
+        else {
+          axios.put(`https://localhost:3000/rest/folders/${f.id}`, f)
+            .then(r => {
+              if (r.status === 200) {
+                axios.post(`https://localhost:3000/rest/folders/${f.id}/scan`)
+                    .then(r => {
+                      console.info('Scanning started!');
+                    })
+              }
+              else {
+                f.scanning = 'error';
+                console.error('No se pudo actualizar la carpeta en la base');
+              }
+            })
+            .catch(e => {
+              f.scanning = 'error';
+              console.error(e)
+            });
+        }
       }
     },
 
@@ -217,13 +261,38 @@ export default {
 
   created: function() {
     this.admin = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
-    axios.get('http://localhost:3000/rest/folders')
+    axios.get('https://localhost:3000/rest/folders')
       .then(folders => {
         if (folders && !folders.data.error) this.folders = prepareFolders(folders.data);
       })
       .catch(e => {
         console.error(e);
+      });
+
+    socket.on('scan-finished', folder => {
+      this.folders = this.folders.map(f => {
+        if (f.path == folder) {
+          let new_f = f;
+          f.scanned = true;
+          f.last_scan = new Date();
+          f.scan_finished = true;
+          new_f.scanning = 'complete';
+          return new_f;
+        }
+        else return f;
       })
+    });
+
+    socket.on('scan-error', folder => {
+      this.folders = this.folders.map(f => {
+        if (f.path == folder) {
+          let new_f = f;
+          new_f.scanning = 'error';
+          return new_f;
+        }
+        else return f;
+      })
+    });
   },
 
   components: {
@@ -243,5 +312,14 @@ export default {
 
 .folder input[type="text"] {
   width: 300px;
+}
+
+.icon-button {
+  cursor: pointer;
+  transition: font-size 0.5s;
+}
+
+.icon-button:hover {
+  font-size: 120%;
 }
 </style>

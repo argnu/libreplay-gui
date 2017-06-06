@@ -27,7 +27,7 @@ export default {
 
   methods: {
     addUser: function(user) {
-      axios.post(`http://localhost:3000/rest/users?access_token=${this.admin.token}`, { user: user })
+      axios.post(`https://localhost:3000/rest/users?access_token=${this.admin.token}`, { user: user })
            .then(r => {
              if (r.status == 201) {
                alert('Usuario agregado exitosamente!');

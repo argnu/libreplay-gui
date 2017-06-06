@@ -9,11 +9,11 @@
 import { APlayer } from '../../APlayer';
 
 function getSongUrl(song) {
-  return 'http://localhost:3000/files/songs/' + song.id;
+  return 'https://localhost:3000/files/songs/' + song.id;
 }
 
 function getAlbumArt(song) {
-  return 'http://localhost:3000/files/album-art/' + song.albumId;
+  return 'https://localhost:3000/files/album-art/' + song.albumId;
 }
 
 export default {
