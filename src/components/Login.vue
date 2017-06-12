@@ -112,7 +112,7 @@ export default {
     login: function() {
       this.submitted = true;
       if (this.isValid) {
-        axios.post('http://192.168.0.8:3000/rest/users/authenticate', this.user)
+        axios.post('http://localhost:3000/rest/users/authenticate', this.user)
           .then(r => {
             if (r.status === 200) {
               Cookies.set('LibrePlayUser', JSON.stringify(r.data), 1);

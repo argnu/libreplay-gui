@@ -12,7 +12,7 @@
         </span>
       </p>
 
-      <ul class="menu-list is-fullwidth">
+      <ul class="menu-list is-fullwidth" id="list-artists">
         <li><a :class="{ 'is-active': !selected }" @click="select('')">Todos los artistas</a></li>
         <li class="artist-link" v-for="artist in list_show">
           <a :class="{ 'is-active': selected === artist.id }" @click="select(artist.id)">
@@ -58,7 +58,7 @@ export default {
     },
 
     filterArtists: function() {
-      this.list_show = this.list.filter(a => a.name.includes(this.search_artist));
+      this.list_show = this.list.filter(a => a.name.toLowerCase().includes(this.search_artist.toLowerCase()));
     },
 
     addArtistToPlaylist: function(artist) {
@@ -73,6 +73,21 @@ export default {
 </script>
 
 <style>
+@media (max-width: 768px) {
+  #list-artists {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 770px) {
+  #list-artists {
+    max-height: 350px;
+    width: 100%;
+    overflow-y: scroll;
+  }
+}
+
 .artist-link i {
   display: none;
   background: black;

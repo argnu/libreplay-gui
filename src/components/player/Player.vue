@@ -9,11 +9,11 @@
 import { APlayer } from '../../APlayer';
 
 function getSongUrl(song) {
-  return 'http://192.168.0.8:3000/files/songs/' + song.id;
+  return 'http://localhost:3000/files/songs/' + song.id;
 }
 
 function getAlbumArt(song) {
-  return 'http://192.168.0.8:3000/files/album-art/' + song.albumId;
+  return 'http://localhost:3000/files/album-art/' + song.albumId;
 }
 
 export default {
@@ -47,6 +47,7 @@ export default {
       });
 
       this.player.on('save', (list) => {
+        this.player.hideMenu();
         this.$emit('savePlaylist', list);
       });
 

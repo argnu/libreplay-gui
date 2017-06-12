@@ -458,6 +458,13 @@ export class APlayer {
         instances.push(this);
     }
 
+    hideMenu() {
+      let list = this.element.getElementsByClassName('aplayer-list')[0];      
+      if (!list.classList.contains('aplayer-list-hide')) {
+          list.classList.add('aplayer-list-hide');
+      }
+    }
+
     /**
      * Set music
      */

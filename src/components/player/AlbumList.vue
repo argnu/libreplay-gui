@@ -3,16 +3,18 @@
     <p class="menu-label">
       Albums
     </p>
-    <div v-for="album in list" class="album"  :class="{ 'is-active': selected === album.id }" @click="select(album.id)">
-        <figure class="image is-128x128" :style="{ 'background-image': album.art ? 'url(http://192.168.0.8:3000/files/album-art/' + album.id + ')' : 'url(/static/noart.jpg)' }">
-          <i class="fa fa-plus" @click="addAlbumToPlaylist(album)"></i>
-          <i class="fa fa-play" @click="playAlbum(album)"></i>
-        </figure>
-        <div class="album-subtitle">
-          {{ album.name }}
-          <br>
-          {{ album.artistName }}
-        </div>
+    <div id="list-albums">
+      <div v-for="album in list" class="album"  :class="{ 'is-active': selected === album.id }" @click="select(album.id)">
+          <figure class="image is-128x128" :style="{ 'background-image': album.art ? 'url(http://localhost:3000/files/album-art/' + album.id + ')' : 'url(/static/noart.jpg)' }">
+            <i class="fa fa-plus" @click="addAlbumToPlaylist(album)"></i>
+            <i class="fa fa-play" @click="playAlbum(album)"></i>
+          </figure>
+          <div class="album-subtitle">
+            {{ album.name }}
+            <br>
+            {{ album.artistName }}
+          </div>
+      </div>
     </div>
   </div>
 </template>
@@ -45,6 +47,21 @@ export default {
 </script>
 
 <style>
+  @media (max-width: 768px) {
+    #list-albums {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  }
+
+  @media (min-width: 770px) {
+    #list-albums {
+      max-height: 350px;
+      width: 98%;
+      overflow-y: scroll;
+    }
+  }
+
 .album {
   cursor: pointer;
   display: inline-block;

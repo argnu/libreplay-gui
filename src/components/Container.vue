@@ -9,7 +9,10 @@
           </router-link>
       </div>
 
-      <div class="nav-center">
+      <div class="nav-right is-hidden-desktop" v-if="user">
+        <a class="button" @click="show_mobile_menu = !show_mobile_menu">
+          <i class="fa fa-list"></i>
+        </a>
       </div>
 
 
@@ -58,6 +61,32 @@
 
     <notification ref="notification" :msg="msg_notification"></notification>
 
+    <transition enter-active-class="animated slideInDown" leave-active-class="animated slideOutUp">
+      <div class="mobile-menu box" v-if="show_mobile_menu">
+        <aside class="menu">
+          <p class="menu-label">
+            Menu
+          </p>
+          <hr>
+          <ul class="menu-list">
+            <li @click="activate_modal = true">
+              <i class="fa fa-user"></i> User Config
+            </li>
+            <hr>
+            <!-- <li>
+              <router-link to="/admin">
+                System Config <i class="fa fa-cog"></i>
+              </router-link>
+            </li> -->
+            <li @click="signOut()">
+              <i class="fa fa-sign-out"></i> Sign Out
+            </li>
+            <hr>
+          </ul>
+        </aside>
+      </div>
+    </transition>
+
     <div style="margin-top:20px">
       <div class="modal" :class="{ 'is-active': activate_modal }" v-if="user">
         <div class="modal-background"></div>
@@ -91,6 +120,7 @@ export default {
 
   data()  {
     return {
+      show_mobile_menu: false,
       msg_notification: '',
       activate_modal: false,
       playlists: [],
@@ -119,7 +149,7 @@ export default {
 
   methods: {
     editUser: function(user) {
-      axios.put(`http://192.168.0.8:3000/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
+      axios.put(`http://localhost:3000/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
            .then(r => {
              if (r.status == 200) {
                for(let key in user) {
@@ -152,8 +182,9 @@ export default {
     },
 
     signOut: function() {
-      Cookies.remove('LibrePlayUser');
+      this.show_mobile_menu = false;
       this.user = null;
+      Cookies.remove('LibrePlayUser');
       this.$router.push({ path: '/' })
     }
   },
@@ -166,6 +197,20 @@ export default {
 </script>
 
 <style scoped>
+
+@media (max-width: 768px) {
+  .mobile-menu {
+    margin: 10px;
+  }
+
+  .mobile-menu hr {
+    margin: 10px;
+  }
+
+  .mobile-menu li {
+    margin-left: 20px;
+  }
+}
 
 .nav-item img {
   margin-left: 30px;
@@ -218,5 +263,4 @@ nav {
   cursor: pointer;
   font-weight: bold;
 }
-
 </style>

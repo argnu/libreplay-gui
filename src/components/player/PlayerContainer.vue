@@ -43,7 +43,7 @@
             <p class="control has-icons-left has-icons-right">
               <input class="input"  type="text" placeholder="Nombre del playlist..." v-model="playlist_name">
               <span class="icon is-small is-left">
-                <i class="fa fa-list"></i>
+                <i class="fa fa-music"></i>
               </span>
               <!-- <span class="icon is-small is-right" v-show="submitted && !validation.email">
                 <i class="fa fa-warning"></i>
@@ -61,9 +61,9 @@
       </div>
     </div>
 
-    <div v-if="user" style="margin:10px 0 20px 5px">
-      <button class="button" @click="getPlaylists">
-        <i class="fa fa-list" style="margin-right:10px"></i> Listas de Reproducción
+    <div v-if="user" style="margin:10px 0 20px 5px;">
+      <button id="show-playlists" class="button" @click="getPlaylists">
+        <i class="fa fa-music" style="margin-right:10px"></i> Listas de Reproducción
       </button>
     </div>
 
@@ -191,6 +191,10 @@ export default {
   },
 
   methods: {
+    checkUser: function() {
+      this.user = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
+    },
+
     selectArtist: function(artist) {
       let song_query = `limit=${this.song_limit}`;
       this.$refs.album_list.selected = '';
@@ -327,22 +331,28 @@ export default {
     },
 
     getPlaylists: function() {
-      axios.get(`http://192.168.0.8:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
-           .then(r => {
-             this.playlists = r.data.playlists
-             this.modal_playlist = true;
-           })
-           .catch(e => console.error(e));
+      this.checkUser();
+      if (this.user) {
+        axios.get(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
+             .then(r => {
+               this.playlists = r.data.playlists
+               this.modal_playlist = true;
+             })
+             .catch(e => console.error(e));
+      }
     },
 
     savePlaylistModal: function(songs) {
-      this.modal_save_playlist = true;
-      this.save_playlist_songs = [];
-      for (let i = 0; i < songs.length; i++) {
-        this.save_playlist_songs.push({
-          id: songs[i].id,
-          order: i
-        });
+      this.checkUser();
+      if (this.user) {
+        this.modal_save_playlist = true;
+        this.save_playlist_songs = [];
+        for (let i = 0; i < songs.length; i++) {
+          this.save_playlist_songs.push({
+            id: songs[i].id,
+            order: i
+          });
+        }
       }
     },
 
@@ -352,7 +362,7 @@ export default {
         songs: this.save_playlist_songs
       }
 
-      axios.put(`http://192.168.0.8:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
+      axios.put(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
            .then(r => {
              this.modal_save_playlist = false;
              this.save_playlist_songs = [];
@@ -366,7 +376,7 @@ export default {
 
     removePlaylist: function(i) {
       let playlist = this.playlists[i];
-      axios.delete(`http://192.168.0.8:3000/rest/playlists/${playlist.id}?access_token=${this.user.token}`)
+      axios.delete(`http://localhost:3000/rest/users/${this.user.data.id}/playlists/${playlist.id}?access_token=${this.user.token}`)
            .then(r => {
              this.playlists.splice(i, 1);
            })
@@ -392,19 +402,27 @@ export default {
     #player {
       width: 95%;
     }
-    #column-artist {
+    #column-artists {
       max-height: 300px;
-      overflow-y: auto;
     }
-    #column-albums {
-      max-height: 200px;
-      overflow-y: auto;
+    #show-playlists {
+      width: 100%;
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 770px) {
     #player {
       min-width: 400px;
+    }
+    #column-artists {
+      max-height: 400px;
+      width: 25%;
+      overflow-y: auto;
+    }
+
+    #column-albums {
+      width: 72%;
+      max-height: 400px;
     }
   }
 
@@ -419,7 +437,7 @@ export default {
   #to-top {
     position: fixed;
     z-index: 999;
-    bottom: 10px;
+    bottom: 50px;
     right: 20px;
   }
 </style>
