@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" style="margin:20px">
 
     <div class="modal" :class="{ 'is-active': modal_playlist }" v-if="user">
       <div class="modal-background"></div>
@@ -61,26 +61,29 @@
       </div>
     </div>
 
-    <div v-if="user" style="margin:10px 0 20px 0">
+    <div v-if="user" style="margin:10px 0 20px 5px">
       <button class="button" @click="getPlaylists">
         <i class="fa fa-list" style="margin-right:10px"></i> Listas de Reproducción
       </button>
     </div>
 
-    <div id="player-container">
-      <div id="albums-container" class="tile is-ancestor">
-        <div class="tile is-child is-3 box" style="overflow:auto">
-          <artist-list :list="artists_list" ref="artist_list" @select="selectArtist"
-                      @addArtistToPlaylist="addArtistToPlaylist" @playArtist="playArtist">
-          </artist-list>
-        </div>
-        <div class="tile id-child is-9 box" style="overflow:auto">
+    <div class="columns is-desktop">
+      <div class="colum is-3 box" id="column-artists">
+        <artist-list :list="artists_list" ref="artist_list" @select="selectArtist"
+                    @addArtistToPlaylist="addArtistToPlaylist" @playArtist="playArtist">
+        </artist-list>
+      </div>
+      <div class="colum is-9 box" id="column-albums">
           <album-list :list="album_list" ref="album_list" @select="selectAlbum"
                       @addAlbumToPlaylist="addAlbumToPlaylist" @playAlbum="playAlbum">
           </album-list>
-        </div>
       </div>
-      <div class="tile box">
+    </div>
+
+    <br>
+
+    <div class="columns">
+      <div class="column box">
         <song-list :list="songs_list" @add="addSongToPlaylist" @play="addAndPlay" @search="searchSongs"
                    @playAll="addAndPlayAll" @addAll=addAll>
         </song-list>
@@ -324,7 +327,7 @@ export default {
     },
 
     getPlaylists: function() {
-      axios.get(`https://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
+      axios.get(`http://192.168.0.8:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
            .then(r => {
              this.playlists = r.data.playlists
              this.modal_playlist = true;
@@ -349,7 +352,7 @@ export default {
         songs: this.save_playlist_songs
       }
 
-      axios.put(`https://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
+      axios.put(`http://192.168.0.8:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
            .then(r => {
              this.modal_save_playlist = false;
              this.save_playlist_songs = [];
@@ -363,7 +366,7 @@ export default {
 
     removePlaylist: function(i) {
       let playlist = this.playlists[i];
-      axios.delete(`https://localhost:3000/rest/playlists/${playlist.id}?access_token=${this.user.token}`)
+      axios.delete(`http://192.168.0.8:3000/rest/playlists/${playlist.id}?access_token=${this.user.token}`)
            .then(r => {
              this.playlists.splice(i, 1);
            })
@@ -385,17 +388,32 @@ export default {
 <style>
   @import '/static/APlayer.css';
 
+  @media (max-width: 768px) {
+    #player {
+      width: 95%;
+    }
+    #column-artist {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    #column-albums {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  }
+
+  @media (min-width: 768px) {
+    #player {
+      min-width: 400px;
+    }
+  }
+
   #player {
     position: fixed;
-    min-width: 400px;
     z-index: 999;
     left: 10px;
     bottom: 10px;
     background-color: white;
-  }
-
-  #albums-container {
-    max-height: 400px;
   }
 
   #to-top {

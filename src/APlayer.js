@@ -904,15 +904,18 @@ export class APlayer {
     playPrev() {
       if (this.playIndex === 0) this.setMusic(this.option.music.length - 1);
       else this.setMusic(this.playIndex - 1);
+      this.play();
     }
 
     playNext() {
       if (this.playIndex === this.option.music.length - 1) this.setMusic(0);
       else this.setMusic(this.playIndex + 1);
+      this.play();
     }
 
     playLast() {
       this.setMusic(this.option.music.length - 1);
+      this.play();
     }
 
     setActive(i) {

@@ -91,7 +91,7 @@
 	float: left;
 	height: 66px;
 	width: 66px;
-	background-image: url(/static/noart.jpg);
+	background-image: url(/libreplay/staticnoart.jpg);
 	background-size: 100%;
 	transition: all 0.3s ease;
 }

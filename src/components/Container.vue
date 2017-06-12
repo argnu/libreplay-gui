@@ -1,5 +1,5 @@
 <template>
-  <div @click="clickGral($event)" style="margin-top: 5px">
+  <div @click="clickGral($event)" class="container">
 
     <nav class="nav">
       <div class="nav-left">
@@ -11,6 +11,7 @@
 
       <div class="nav-center">
       </div>
+
 
       <div class="nav-right nav-menu">
         <div class="nav-item" v-if="user">
@@ -47,12 +48,17 @@
           </a>
         </p>
       </div>
+
+      <a class="button is-hidden-desktop" v-if="!user">
+        <router-link to="/login">
+          Sign In <i class="fa fa-sign-in"></i>
+        </router-link>
+      </a>
     </nav>
 
     <notification ref="notification" :msg="msg_notification"></notification>
 
     <div style="margin-top:20px">
-
       <div class="modal" :class="{ 'is-active': activate_modal }" v-if="user">
         <div class="modal-background"></div>
         <div class="modal-card">
@@ -69,16 +75,6 @@
       <router-view></router-view>
     </div>
 
-
-    <!-- <footer class="footer" @click="p">
-      <div class="container">
-        <div class="content has-text-centered">
-          <p>
-            <strong>LibrePlay</strong> by <a href="http://liberascio.org">Liberascio</a>.
-          </p>
-        </div>
-      </div>
-    </footer> -->
   </div>
 </template>
 
@@ -123,7 +119,7 @@ export default {
 
   methods: {
     editUser: function(user) {
-      axios.put(`https://localhost:3000/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
+      axios.put(`http://192.168.0.8:3000/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
            .then(r => {
              if (r.status == 200) {
                for(let key in user) {

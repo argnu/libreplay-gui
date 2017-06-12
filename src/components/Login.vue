@@ -16,7 +16,7 @@
       </div>
     </section>
 
-    <div style="width:50%;margin: 0 auto">
+    <div id="login-form">
       <br>
       <nav class="panel">
         <p class="panel-heading" style="text-align:center">
@@ -112,7 +112,7 @@ export default {
     login: function() {
       this.submitted = true;
       if (this.isValid) {
-        axios.post('https://localhost:3000/rest/users/authenticate', this.user)
+        axios.post('http://192.168.0.8:3000/rest/users/authenticate', this.user)
           .then(r => {
             if (r.status === 200) {
               Cookies.set('LibrePlayUser', JSON.stringify(r.data), 1);
@@ -132,17 +132,39 @@ export default {
 </script>
 
 <style>
+@media (min-width: 768px) {
+  #login-form {
+    width:50%;
+    margin: 0 auto
+  }
+
+  .header div {
+    display: inline-block;
+    margin-left: 20px;
+  }
+
+  .header img {
+    vertical-align: middle;
+    margin-left: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header div {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 60%;
+  }
+
+  .header img {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 20px;
+    width: 60px;
+  }
+}
+
 .panel-block {
   display: block;
-}
-
-.header div {
-  display: inline-block;
-  margin-left: 20px;
-}
-
-.header img {
-  vertical-align: middle;
-  margin-left: 20px;
 }
 </style>

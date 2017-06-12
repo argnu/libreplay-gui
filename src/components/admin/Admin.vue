@@ -171,7 +171,7 @@ export default {
     },
 
     editUser: function(user) {
-      axios.put(`https://localhost:3000/rest/users/${this.user_selected.id}/?access_token=${this.admin.token}`, { user: user })
+      axios.put(`http://192.168.0.8:3000/rest/users/${this.user_selected.id}/?access_token=${this.admin.token}`, { user: user })
            .then(r => {
              if (r.status == 200) {
                this.$refs.list_users.refresh();
@@ -199,7 +199,7 @@ export default {
       let folder = this.folders[i];
       this.folders.splice(i, 1);
       if (folder.id) {
-        axios.delete(`https://localhost:3000/rest/folders/${folder.id}`)
+        axios.delete(`http://192.168.0.8:3000/rest/folders/${folder.id}`)
              .then(r => console.log(r))
              .catch(e => console.error(e));
       }
@@ -210,11 +210,11 @@ export default {
       else {
         f.scanning = 'start';
         if (!f.id) {
-          axios.post('https://localhost:3000/rest/folders', f)
+          axios.post('http://192.168.0.8:3000/rest/folders', f)
             .then(r => {
               if (r.status === 200) {
                 f.id = r.data.id;
-                axios.post(`https://localhost:3000/rest/folders/${r.data.id}/scan`)
+                axios.post(`http://192.168.0.8:3000/rest/folders/${r.data.id}/scan`)
                     .then(r => {
                       console.info('Scanning started!');
                     })
@@ -230,10 +230,10 @@ export default {
             });
         }
         else {
-          axios.put(`https://localhost:3000/rest/folders/${f.id}`, f)
+          axios.put(`http://192.168.0.8:3000/rest/folders/${f.id}`, f)
             .then(r => {
               if (r.status === 200) {
-                axios.post(`https://localhost:3000/rest/folders/${f.id}/scan`)
+                axios.post(`http://192.168.0.8:3000/rest/folders/${f.id}/scan`)
                     .then(r => {
                       console.info('Scanning started!');
                     })
@@ -261,7 +261,7 @@ export default {
 
   created: function() {
     this.admin = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
-    axios.get('https://localhost:3000/rest/folders')
+    axios.get('http://192.168.0.8:3000/rest/folders')
       .then(folders => {
         if (folders && !folders.data.error) this.folders = prepareFolders(folders.data);
       })

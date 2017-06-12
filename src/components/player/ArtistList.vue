@@ -12,14 +12,14 @@
         </span>
       </p>
 
-      <ul class="menu-list">
+      <ul class="menu-list is-fullwidth">
         <li><a :class="{ 'is-active': !selected }" @click="select('')">Todos los artistas</a></li>
         <li class="artist-link" v-for="artist in list_show">
           <a :class="{ 'is-active': selected === artist.id }" @click="select(artist.id)">
             {{ artist.name  }}
           </a>
-          <i class="fa fa-play" @click="addArtistToPlaylist(artist)"></i>
-          <i class="fa fa-plus" @click="playArtist(artist)"></i>
+          <i class="fa fa-play" @click="playArtist(artist)"></i>
+          <i class="fa fa-plus" @click="addArtistToPlaylist(artist)"></i>
         </li>
       </ul>
     </aside>
