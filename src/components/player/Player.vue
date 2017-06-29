@@ -1,28 +1,43 @@
 <template>
   <div>
-    <div class="aplayer" ref="player">
+    <div ref="player">
+      <table class="table table-striped" style="max-height:300px;overflow-y:auto">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Canción</th>
+          </tr>
+        </thead>
+      </table>
     </div>
   </div>
 </template>
 
 <script>
-import { APlayer } from '../../APlayer';
 
-function getSongUrl(song) {
-  return 'http://localhost:3000/files/songs/' + song.id;
-}
-
-function getAlbumArt(song) {
-  return 'http://localhost:3000/files/album-art/' + song.albumId;
-}
+import * as axios from 'axios';
 
 export default {
   name: 'Player',
 
   data () {
     return {
-      player: null
+      // status: 'Waiting...',
+      player: null,
+      status: {}
     }
+  },
+
+  created: function() {
+    Promise.all([
+      axios.post('http://localhost/mpd/player/playlist', {command: 'playlistinfo'}),
+      axios.get('http://localhost/mpd/player/status')
+    ])
+    .then(rs => {
+      console.log(rs[0].data.result)
+      this.status = rs[1].data.result;
+    })
+    .catch(e => console.error(e));
   },
 
   methods: {
@@ -30,56 +45,26 @@ export default {
       this.player.playNext();
     },
 
-    createPlayer: function(song) {
-      this.player = new APlayer({
-          element: this.$refs.player,
-          narrow: false,
-          autoplay: true,
-          listmaxheight: '300px',
-          mode: 'circulation',
-          music: {
-            title: song.name,
-            author: song.artist.name,
-            url: getSongUrl(song),
-            pic: getAlbumArt(song),
-            id: song.id
-          }
-      });
-
-      this.player.on('save', (list) => {
-        this.player.hideMenu();
-        this.$emit('savePlaylist', list);
-      });
-
-      this.player.on('destroy', () => {
-        this.player.pause();
-        this.$refs.player.innerHTML = '';
-        this.player = null;
-      });
-    },
 
     reset: function() {
-      if (this.player) this.player.pause();
-      this.$refs.player.innerHTML = '';
-      this.player = null;
+
     },
 
     addSong: function(song) {
-      if (!this.player) this.createPlayer(song);
-      else {
-        this.player.addMusic([{
-          title: song.name,
-          author: song.artist.name,
-          url: getSongUrl(song),
-          pic: getAlbumArt(song),
-          id: song.id
-        }]);
-      }
+      axios.post('http://localhost/mpd/player/add', {file: song.uri})
+           .then(r => {
+             this.status.playlistlength = this.status.playlistlength + 1;
+           })
+           .catch(e => console.error(e));
     },
 
     addAndPlay(song) {
-      this.addSong(song);
-      this.player.playLast();
+      axios.post('http://localhost/mpd/player/add', {file: song.uri})
+           .then(r => {
+             this.status.playlistlength = +this.status.playlistlength + 1;
+             axios.post('http://localhost/mpd/player/playback', {command: 'play', params: `${this.status.playlistlength - 1}`})
+           })
+           .catch(e => console.error(e));
     }
   }
 }
