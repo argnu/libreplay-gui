@@ -4,8 +4,8 @@
       Albums
     </p>
     <div id="list-albums">
-      <div v-for="album in list" class="album"  :class="{ 'is-active': selected === album.id }" @click="select(album.id)">
-          <figure class="image is-128x128" :style="{ 'background-image': album.art ? 'url(http://localhost:3000/files/album-art/' + album.id + ')' : 'url(/static/noart.jpg)' }">
+      <div v-for="album in list" class="album"  :class="{ 'is-active': selected === album.name }" @click="select(album.name)">
+          <figure class="image is-128x128" :style="{ 'background-image': album.art ? 'url(http://localhost:3000/files/album-art/' + album.name + ')' : 'url(/static/noart.jpg)' }">
             <i class="fa fa-plus" @click="addAlbumToPlaylist(album)"></i>
             <i class="fa fa-play" @click="playAlbum(album)"></i>
           </figure>

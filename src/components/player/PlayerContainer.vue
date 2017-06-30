@@ -67,6 +67,12 @@
       </button>
     </div>
 
+    <div class="columns" v-show="modal_loading">
+      <div class="column">
+        Cargando Música...
+      </div>
+    </div>
+
     <div class="columns is-desktop">
       <div class="colum is-3 box" id="column-artists">
         <artist-list :list="artists_list" ref="artist_list" @select="selectArtist"
@@ -139,7 +145,8 @@ export default {
       save_playlist_songs: [],
       playlist_name: '',
       playlists: [],
-      user: null
+      user: null,
+      modal_loading: false
     }
   },
 
@@ -159,22 +166,22 @@ export default {
     socket.on('new-album', album => {
       this.albums_all.push(album);
       this.albums_all = _.sortBy(this.albums_all, [function(o) { return o.name; }]);
-      if (this.$refs.artist_list.selected == album.artistId)  {
+      if (this.$refs.artist_list.selected == album.artist)  {
         let album_selected = this.$refs.album_list.selected;
-        this.selectArtist(album.artistId);
+        this.selectArtist(album.artist);
         this.$refs.album_list.selected = album_selected;
       }
     });
+
+    this.modal_loading = true;
 
     MusicService.getArtists()
       .then(data => {
         this.artists_list = data;
         this.albums_all = data.map(a => a.albums).reduce((a,b) => a.concat(b), []);
         this.album_list = this.albums_all;
-        MusicService.getSongs(`limit=${this.song_limit}`)
-                    .then(data => this.songs_list = data);
+        this.modal_loading = false;
         console.info('Datos de música recuperados del servidor');
-
       });
   },
 
@@ -198,16 +205,18 @@ export default {
     selectArtist: function(artist) {
       let song_query = `limit=${this.song_limit}`;
       this.$refs.album_list.selected = '';
-      if (artist) {
-        this.album_list = this.albums_all.filter(a => a.artistId === artist);
-        song_query += `&artistId=${artist}`;
+      if (artist != -1) {
+        this.album_list = this.albums_all.filter(a => a.artist == artist);
+        song_query += `&type=artist&elem=${artist}`;
+        MusicService.getSongs(song_query).then(data => {
+          this.songs_list = data;
+        });
       }
       else this.album_list = this.albums_all;
-      MusicService.getSongs(song_query).then(data => this.songs_list = data);
     },
 
     selectAlbum: function(album) {
-      MusicService.getSongs(`albumId=${album}&limit=${this.song_limit}`)
+      MusicService.getSongs(`&type=album&elem=${album}&limit=${this.song_limit}`)
                   .then(data => this.songs_list = data);
     },
 
@@ -215,8 +224,8 @@ export default {
       if (this.$refs.artist_list && this.$refs.album_list) {
         if (this.song_list_count >= this.song_limit) {
           let song_query = `limit=${this.song_limit}&offset=${this.song_list_count + this.song_limit}`;
-          if (this.$refs.artist_list.selected) song_query += `&artistId=${this.$refs.artist_list.selected}`;
-          if (this.$refs.album_list.selected) song_query += `&albumId=${this.$refs.album_list.selected}`;
+          if (this.$refs.artist_list.selected != -1) song_query += `&type=artist&elem=${this.$refs.artist_list.selected}`;
+          if (this.$refs.album_list.selected) song_query += `&type=album&elem=${this.$refs.album_list.selected}`;
           if (this.search_song) song_query += `&search=${this.search_song}`;
           this.load_songs = true;
           MusicService.getSongs(song_query)
@@ -230,8 +239,8 @@ export default {
 
     searchSongs: function(value) {
       let song_query = `limit=${this.song_limit}`;
-      if (this.$refs.artist_list.selected) song_query += `&artistId=${this.$refs.artist_list.selected}`;
-      if (this.$refs.album_list.selected) song_query += `&albumId=${this.$refs.album_list.selected}`;
+      if (this.$refs.artist_list.selected) song_query += `&type=artist&elem=${this.$refs.artist_list.selected}`;
+      if (this.$refs.album_list.selected) song_query += `&type=album&elem=${this.$refs.album_list.selected}`;
       this.search_song = value;
       song_query += `&search=${value}`;
       MusicService.getSongs(song_query)
@@ -267,7 +276,7 @@ export default {
     },
 
     addAlbumToPlaylist: function(album) {
-      let song_query = `albumId=${album.id}`;
+      let song_query = `&type=album&elem=${album.name}`;
       MusicService.getSongs(song_query)
                   .then(data => {
                      data.forEach(s => this.addSongToPlaylist(s));
@@ -275,11 +284,11 @@ export default {
     },
 
     playAlbum: function(album){
-      let song_query = `albumId=${album.id}`;
+      let song_query = `&type=album&elem=${album.name}`;
       MusicService.getSongs(song_query)
                   .then(data => {
                     let length = data.length;
-                    this.$refs.player.reset();
+                    this.$refs.player.clear();
                     for (let i = 0; i < length; i++) {
                       if (i === 0) this.addAndPlay(data[i]);
                       else this.addSongToPlaylist(data[i]);
@@ -288,7 +297,7 @@ export default {
     },
 
     addArtistToPlaylist: function(artist) {
-      let song_query = `artistId=${artist.id}`;
+      let song_query = `&type=artist&elem=${artist.name}`;
       MusicService.getSongs(song_query)
                   .then(data => {
                      data.forEach(s => this.addSongToPlaylist(s));
@@ -296,11 +305,11 @@ export default {
     },
 
     playArtist: function(artist){
-      let song_query = `artistId=${artist.id}`;
+      let song_query = `&type=artist&elem=${artist.name}`;
       MusicService.getSongs(song_query)
                   .then(data => {
                     let length = data.length;
-                    this.$refs.player.reset();
+                    this.$refs.player.clear();
                     for (let i = 0; i < length; i++) {
                       if (i === 0) this.$refs.player.addAndPlay(data[i]);
                       else this.addSongToPlaylist(data[i]);
@@ -310,7 +319,7 @@ export default {
 
     playPlaylist: function(playlist){
       let total = playlist.listsongs.length;
-      this.$refs.player.reset();
+      this.$refs.player.clear();
       for (let i = 0; i < total; i++) {
         if (i === 0) this.$refs.player.addAndPlay(playlist.listsongs[i].song);
         else this.addSongToPlaylist(playlist.listsongs[i].song);

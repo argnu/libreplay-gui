@@ -43,20 +43,20 @@
             </div>
           </div>
         </div>
-        <p class="nav-item" v-if="!user">
+        <!-- <p class="nav-item" v-if="!user">
           <a class="button">
             <router-link to="/login">
               Sign In <i class="fa fa-sign-in"></i>
             </router-link>
           </a>
-        </p>
+        </p> -->
       </div>
 
-      <a class="button is-hidden-desktop" v-if="!user">
+      <!-- <a class="button is-hidden-desktop" v-if="!user">
         <router-link to="/login">
           Sign In <i class="fa fa-sign-in"></i>
         </router-link>
-      </a>
+      </a> -->
     </nav>
 
     <notification ref="notification" :msg="msg_notification"></notification>
@@ -138,6 +138,7 @@ export default {
     let debounced = _.debounce(this.setNotification, 300, { 'maxWait': 1000 });
     socket.on('new-artist', artist => debounced(`Artista añadido: "${artist.name}"`));
     socket.on('new-album', album => debounced(`Album añadido: "${album.name}"`));
+    socket.on('ready', debounced('Connected to MPD server!'));
   },
 
   computed: {

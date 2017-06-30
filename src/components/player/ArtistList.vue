@@ -13,10 +13,10 @@
       </p>
 
       <ul class="menu-list is-fullwidth" id="list-artists">
-        <li><a :class="{ 'is-active': !selected }" @click="select('')">Todos los artistas</a></li>
+        <li><a :class="{ 'is-active': selected == -1 }" @click="select(-1)">Todos los artistas</a></li>
         <li class="artist-link" v-for="artist in list_show">
-          <a :class="{ 'is-active': selected === artist.id }" @click="select(artist.id)">
-            {{ artist.name  }}
+          <a :class="{ 'is-active': selected === artist.name }" @click="select(artist.name)">
+            {{ artist.name | artistName }}
           </a>
           <i class="fa fa-play" @click="playArtist(artist)"></i>
           <i class="fa fa-plus" @click="addArtistToPlaylist(artist)"></i>
@@ -35,7 +35,7 @@ export default {
 
   data () {
     return {
-      selected: '',
+      selected: -1,
       search_artist: '',
       list_show: []
     }
@@ -47,10 +47,17 @@ export default {
     }
   },
 
+  filters: {
+    artistName: function(name) {
+        if (name.length) return name;
+        else return '<Vacío>';
+    }
+  },
+
   methods: {
-    select: function(id) {
-      this.selected = id;
-      this.$emit('select', id);
+    select: function(name) {
+      this.selected = name;
+      this.$emit('select', name);
     },
 
     filter: function () {
