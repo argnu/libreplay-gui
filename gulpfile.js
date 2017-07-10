@@ -4,7 +4,7 @@ const scp = require('gulp-scp2');
 const replace = require('gulp-replace-task');
 const argv = require('minimist')(process.argv.slice(2));
 
-gulp.task('replace', function() {
+gulp.task('sethost:gui', function() {
   gulp.src(['dist/**/*'])
     .pipe(replace({
             patterns: [
@@ -17,10 +17,29 @@ gulp.task('replace', function() {
               {
                 match: new RegExp('/static/', "g"),
                 replacement: function() {
-                  return `/argv.f/static/`
+                  return `/${argv.f}/static/`
                 }
               }
             ]
           }))
     .pipe(gulp.dest('dist/'));
 });
+
+gulp.task('sethost:server', function() {
+  gulp.src('node-server/index.js')
+    .pipe(replace({
+            patterns: [
+              {
+                match: new RegExp('localhost:3000', "g"),
+                replacement: function() {
+                  return argv.h;
+                }
+              }
+            ]
+          }))
+    .pipe(gulp.dest('dist/'));
+});
+
+
+
+,
