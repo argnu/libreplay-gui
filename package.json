@@ -5,9 +5,9 @@
   "author": "Martín Weingart <mweingart@neuquen.gov.ar>",
   "private": true,
   "scripts": {
-    "dev": "node build/dev-server.js",
     "build": "node build/build.js",
-    "serve": "nodemon node-server/index.js"
+    "serve": "nodemon node-server/index.js",
+    "dev": "node build/dev-server.js"
   },
   "dependencies": {
     "animate.css": "^3.5.2",
@@ -20,6 +20,7 @@
     "jquery": "^3.2.1",
     "js-cookie": "^2.1.4",
     "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
     "socket.io": "^2.0.3",
     "socket.io-client": "^1.7.3",
     "vue": "^2.2.2",

@@ -1,21 +1,23 @@
 const path = require('path');
-const app = require('express')();
-const server = require('http').Server(app);
+const express = require('express');
 const mpd = require('mpd');
 const db = require('./db');
 const utils = require('./utils');
 const rtypes = require('./rtypes');
 const body_parser = require('body-parser');
 
+const app = express();
+const server = require('http').Server(app);
 server.listen(3000);
 
 let io = require('socket.io')(server);
 let client = mpd.connect({
   port: 6600,
-  host: '10.1.38.88',
+  host: 'localhost',
 });
 
 app.use(body_parser.json());
+app.use('/', express.static(path.join(__dirname, '..', 'dist')));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -39,6 +41,10 @@ io.on('connection', function (socket) {
 
   client.on('system-playlist', function() {
     socket.emit('update-playlist');
+  });
+
+  client.on('system-mixer', function() {
+    socket.emit('update-player');
   });
 });
 

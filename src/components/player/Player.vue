@@ -1,23 +1,22 @@
 <template>
 <div>
-  <div ref="player" style="max-height:300px;border: 0.5px solid grey;">
-    <div class="columns" style="width:100%">
-      <div class="column is-11">
-        <div class="button-bar">
-          <i title="Mostrar/Ocultar" class="fa fa-list" @click="show = !show"></i>
-          <i title="Play/Pause" :class="{ 'fa-pause': status.state == 'play', 'fa-play': status.state == 'stop' || status.state == 'pause' }" class="fa" @click="togglePause()"></i>
-          <i title="Stop" class="fa fa-stop" @click="stop()"></i>
-          <i title="Anterior" class="fa fa-step-backward" @click="playPrev"></i>
-          <i title="Siguiente" class="fa fa-step-forward" @click="playNext"></i>
-          <i title="Aleatorio" :class="{ 'btn-off': status.random == '0' }" class="fa fa-random" @click="toggleRandom()"></i>
-          <i title="Repetir" :class="{ 'btn-off': status.repeat == '0' }" class="fa fa-repeat" @click="toggleRepeat()"></i>
-          <i title="Limpiar Lista" :class="{ 'btn-off': playlist.length < 1 }" class="fa fa-remove" @click="clear()"></i>
-        </div>
-        <!-- <br> -->
-        <input v-model="time" @change="chgTime" type="range" style="width:100%">
+  <div ref="player" style="border: 0.5px solid grey;">
+    <div class="button-bar" style="width:100%">
+        <i title="Mostrar/Ocultar" class="fa fa-list" @click="show = !show"></i>
+        <i title="Play/Pause" :class="{ 'fa-pause': status.state == 'play', 'fa-play': status.state == 'stop' || status.state == 'pause' }" class="fa" @click="togglePause()"></i>
+        <i title="Stop" class="fa fa-stop" @click="stop()"></i>
+        <i title="Anterior" class="fa fa-step-backward" @click="playPrev"></i>
+        <i title="Siguiente" class="fa fa-step-forward" @click="playNext"></i>
+        <i title="Aleatorio" :class="{ 'btn-off': status.random == '0' }" class="fa fa-random" @click="toggleRandom()"></i>
+        <i title="Repetir" :class="{ 'btn-off': status.repeat == '0' }" class="fa fa-repeat" @click="toggleRepeat()"></i>
+        <i title="Limpiar Lista" :class="{ 'btn-off': playlist.length < 1 }" class="fa fa-remove" @click="clear()"></i>
+    </div>
+    <div class="columns" style="margin: 0 0 10px 0">
+      <div class="column is-2">
+        <span>Volume:</span>
       </div>
-      <div class="column is-1">
-        <input v-model="volume" @change="chgVolume" type="range" style="width:0px;height:70px" orient="vertical">
+      <div class="column">
+        <input v-model="volume" @change="chgVolume" type="range" style="width:100%">
       </div>
     </div>
 
@@ -40,6 +39,7 @@
         </tbody>
       </table>
     </div>
+    <input v-model="time" @change="chgTime" type="range" style="width:100%;vertical-align:middle">
   </div>
 </div>
 </template>
