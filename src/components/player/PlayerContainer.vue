@@ -45,9 +45,6 @@
               <span class="icon is-small is-left">
                 <i class="fa fa-music"></i>
               </span>
-              <!-- <span class="icon is-small is-right" v-show="submitted && !validation.email">
-                <i class="fa fa-warning"></i>
-              </span> -->
             </p>
           </div>
           <div class="field">
