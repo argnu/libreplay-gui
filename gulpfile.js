@@ -8,7 +8,7 @@ gulp.task('replace', function() {
     .pipe(replace({
             patterns: [
               {
-                match: new RegExp('http://localhost:3000', "g"),
+                match: new RegExp('http://localhost:3002', "g"),
                 replacement: function() {
                   return `http://${process.argv[2]}:3000`;
                 }

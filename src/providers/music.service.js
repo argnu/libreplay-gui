@@ -1,9 +1,10 @@
 //jshint esversion:6
 
 import * as axios from 'axios';
+import { Config } from '../configs/Config';
 
 export function getArtists() {
-  return axios.get('http://localhost:3000/rest/artists', {responseType: 'json'})
+  return axios.get(`${Config.host}/rest/artists`, {responseType: 'json'})
     .then( response => {
         return Promise.resolve(response.data);
       })
@@ -11,7 +12,7 @@ export function getArtists() {
 }
 
 export function getAlbums(q) {
-  return axios.get(`http://localhost:3000/rest/albums?${q || ''}`, {responseType: 'json'})
+  return axios.get(`${Config.host}/rest/albums?${q || ''}`, {responseType: 'json'})
     .then( response => {
         return Promise.resolve(response.data);
       })
@@ -19,7 +20,7 @@ export function getAlbums(q) {
 }
 
 export function getSongs(q) {
-  return axios.get(`http://localhost:3000/rest/songs?${q || ''}`, {responseType: 'json'})
+  return axios.get(`${Config.host}/rest/songs?${q || ''}`, {responseType: 'json'})
     .then( response => {
         return Promise.resolve(response.data);
       })
@@ -35,7 +36,7 @@ function handleError(error) {
 //
 //   constructor() {
 //     if (!music_data) {
-//       return axios.get('http://localhost:3000/rest/artists', {responseType: 'json'})
+//       return axios.get('http://localhost:3002/rest/artists', {responseType: 'json'})
 //         .then( response => {
 //             this.music_data = response.data;
 //             prepareData(this.music_data);

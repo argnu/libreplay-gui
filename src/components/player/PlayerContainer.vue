@@ -119,6 +119,7 @@ import * as _ from 'lodash';
 import { socket } from '../../socket';
 import * as axios from 'axios';
 import * as Cookies from 'js-cookie';
+import { Config } from '../../configs/Config';
 
 export default {
   name: 'PlayerContainer',
@@ -333,7 +334,7 @@ export default {
     getPlaylists: function() {
       this.checkUser();
       if (this.user) {
-        axios.get(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
+        axios.get(`${Config.host}/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`)
              .then(r => {
                this.playlists = r.data.playlists
                this.modal_playlist = true;
@@ -362,7 +363,7 @@ export default {
         songs: this.save_playlist_songs
       }
 
-      axios.put(`http://localhost:3000/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
+      axios.put(`${Config.host}/rest/users/${this.user.data.id}/playlists?access_token=${this.user.token}`, playlist)
            .then(r => {
              this.modal_save_playlist = false;
              this.save_playlist_songs = [];
@@ -376,7 +377,7 @@ export default {
 
     removePlaylist: function(i) {
       let playlist = this.playlists[i];
-      axios.delete(`http://localhost:3000/rest/users/${this.user.data.id}/playlists/${playlist.id}?access_token=${this.user.token}`)
+      axios.delete(`${Config.host}/rest/users/${this.user.data.id}/playlists/${playlist.id}?access_token=${this.user.token}`)
            .then(r => {
              this.playlists.splice(i, 1);
            })

@@ -11,6 +11,7 @@
 <script>
 import * as axios from 'axios';
 import * as Cookies from 'js-cookie';
+import { Config } from '../../configs/Config';
 import UserForm from '@/components/admin/UserForm';
 
 export default {
@@ -27,7 +28,7 @@ export default {
 
   methods: {
     addUser: function(user) {
-      axios.post(`http://localhost:3000/rest/users?access_token=${this.admin.token}`, { user: user })
+      axios.post(`${Config.host}/rest/users?access_token=${this.admin.token}`, { user: user })
            .then(r => {
              if (r.status == 201) {
                alert('Usuario agregado exitosamente!');

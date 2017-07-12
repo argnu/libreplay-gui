@@ -34,7 +34,7 @@
 import * as axios from 'axios';
 import * as Cookies from 'js-cookie';
 import * as utils from '../../utils';
-
+import { Config } from '../../configs/Config';
 
 export default {
   name: 'list-users',
@@ -61,7 +61,7 @@ export default {
   created: function() {
     this.admin = Cookies.get('LibrePlayUser') ? JSON.parse(Cookies.get('LibrePlayUser')) : null;
     if (this.admin) {
-      axios.get(`http://localhost:3000/rest/users?access_token=${this.admin.token}`)
+      axios.get(`${Config.host}/rest/users?access_token=${this.admin.token}`)
            .then(r => {
              this.users = r.data.data;
            });
@@ -71,7 +71,7 @@ export default {
   methods: {
     remove: function(i) {
       let user = this.users[i];
-      axios.delete(`http://localhost:3000/rest/users/${user.id}/?access_token=${this.admin.token}`)
+      axios.delete(`${Config.host}/rest/users/${user.id}/?access_token=${this.admin.token}`)
            .then(r => {
              console.log(r);
              this.users.splice(i, 1);
@@ -85,7 +85,7 @@ export default {
 
     refresh() {
       if (this.admin) {
-        axios.get(`http://localhost:3000/rest/users?access_token=${this.admin.token}`)
+        axios.get(`${Config.host}/rest/users?access_token=${this.admin.token}`)
              .then(r => {
                this.users = r.data.data;
              });

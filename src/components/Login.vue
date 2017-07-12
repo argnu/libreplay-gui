@@ -77,6 +77,7 @@
 
 <script>
 import { validateEmail } from '../utils';
+import { Config } from '../configs/Config';
 import Cookies from 'js-cookie';
 import * as axios from 'axios';
 
@@ -112,7 +113,7 @@ export default {
     login: function() {
       this.submitted = true;
       if (this.isValid) {
-        axios.post('http://localhost:3000/rest/users/authenticate', this.user)
+        axios.post(`${Config.host}/rest/users/authenticate`, this.user)
           .then(r => {
             if (r.status === 200) {
               Cookies.set('LibrePlayUser', JSON.stringify(r.data), 1);

@@ -111,6 +111,7 @@
 import Notification from '@/components/Notification';
 import UserForm from '@/components/admin/UserForm';
 import { socket } from '../socket';
+import { Config } from '../configs/Config';
 import * as _ from 'lodash';
 import * as axios from 'axios';
 import * as Cookies from 'js-cookie';
@@ -149,7 +150,7 @@ export default {
 
   methods: {
     editUser: function(user) {
-      axios.put(`http://localhost:3000/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
+      axios.put(`${Config.host}/rest/users/${this.user.data.id}/?access_token=${this.user.token}`, { user: user })
            .then(r => {
              if (r.status == 200) {
                for(let key in user) {

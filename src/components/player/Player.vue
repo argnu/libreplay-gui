@@ -7,13 +7,14 @@
 
 <script>
 import { APlayer } from '../../APlayer';
+import { Config } from '../../configs/Config';
 
 function getSongUrl(song) {
-  return 'http://localhost:3000/files/songs/' + song.id;
+  return `${Config.host}/files/songs/${song.id}`;
 }
 
 function getAlbumArt(song) {
-  return 'http://localhost:3000/files/album-art/' + song.albumId;
+  return `${Config.host}/files/album-art/${song.albumId}` + song.albumId;
 }
 
 export default {
