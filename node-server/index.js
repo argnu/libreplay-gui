@@ -13,7 +13,7 @@ let io = require('socket.io')(server);
 
 let mpd_client = mpd.connect({
   port: 6600,
-  host: 'localhost',
+  host: '10.1.38.88',
 });
 
 app.use(body_parser.json());
@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
     socket.emit('update-playlist');
   });
 
-  client.on('system-mixer', function() {
+  mpd_client.on('system-mixer', function() {
     socket.emit('update-player');
   });
 });

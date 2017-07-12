@@ -25,21 +25,6 @@ gulp.task('sethost:gui', function() {
     .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('sethost:server', function() {
-  gulp.src('node-server/index.js')
-    .pipe(replace({
-            patterns: [
-              {
-                match: new RegExp('localhost:3000', "g"),
-                replacement: function() {
-                  return argv.h;
-                }
-              }
-            ]
-          }))
-    .pipe(gulp.dest('dist/'));
-});
-
 
 
 ,
